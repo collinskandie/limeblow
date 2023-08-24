@@ -19,7 +19,7 @@
           <a href="cart"><i class="fa fa-shopping-bag"></i> <span>0</span></a>
         </li>
       </ul>
-      <div class="header__cart__price">item: <span>$150.00</span></div>
+      <div class="header__cart__price">item: <span>KES 150.00</span></div>
     </div>
     <div class="humberger__menu__widget">
       <div class="header__top__right__language">
@@ -117,13 +117,13 @@
           <nav class="header__menu">
             <ul>
               <li><a href="index">Home</a></li>
-              <li class="active"><a href="shop-grid">Shop</a></li>
-              <li>
+              <li ><a href="shop-grid">Shop</a></li>
+              <li class="active">
                 <a href="#">Pages</a>
                 <ul class="header__menu__dropdown">
                   <li><a href="shop-details">Shop Details</a></li>
                   <li><a href="shoping-cart">Shoping Cart</a></li>
-                  <li><a href="checkout">Check Out</a></li>
+                  <li class="active"><a href="checkout">Check Out</a></li>
                   <li><a href="blog-details">Blog Details</a></li>
                 </ul>
               </li>
@@ -137,16 +137,16 @@
             <ul>
               <li>
                 <a href="favourites"
-                  ><i class="fa fa-heart"></i> <span>1</span></a
+                  ><i class="fa fa-heart"></i> <span>0</span></a
                 >
               </li>
               <li>
                 <a href="cart"
-                  ><i class="fa fa-shopping-bag"></i> <span>3</span></a
+                  ><i class="fa fa-shopping-bag"></i> <span>0</span></a
                 >
               </li>
             </ul>
-            <div class="header__cart__price">item: <span>$150.00</span></div>
+            <div class="header__cart__price">item: <span>KES 150.00</span></div>
           </div>
         </div>
       </div>
@@ -168,13 +168,9 @@
               <span>All categories</span>
             </div>
             <ul>
-              <li><a href="department">Acrylic tumblers</a></li>
-              <li><a href="department">Stainless steel tumblers</a></li>
-              <li><a href="department">Wooden Gifts</a></li>
-              <li><a href="department">Glass Gifts</a></li>
-              <li><a href="department">Doormats</a></li>
-              <li><a href="department">Clothing</a></li>
-              <li><a href="department">Accessories </a></li>
+              <% categories.forEach(category => { %>
+              <li><a href="/department"><%= category.name %></a></li>
+              <% }); %>
             </ul>
           </div>
         </div>
@@ -333,15 +329,15 @@
                   Products <span>Total</span>
                 </div>
                 <ul>
-                  <li>Vegetable’s Package <span>$75.99</span></li>
-                  <li>Fresh Vegetable <span>$151.99</span></li>
-                  <li>Organic Bananas <span>$53.99</span></li>
+                  <li>Vegetable’s Package <span>KES 75.99</span></li>
+                  <li>Fresh Vegetable <span>KES 151.99</span></li>
+                  <li>Organic Bananas <span>KES 53.99</span></li>
                 </ul>
                 <div class="checkout__order__subtotal">
-                  Subtotal <span>$750.99</span>
+                  Subtotal <span>KES 750.99</span>
                 </div>
                 <div class="checkout__order__total">
-                  Total <span>$750.99</span>
+                  Total <span>KES 750.99</span>
                 </div>
                 <div class="checkout__input__checkbox">
                   <label for="acc-or">

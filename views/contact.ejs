@@ -19,7 +19,7 @@
           <a href="cart"><i class="fa fa-shopping-bag"></i> <span>0</span></a>
         </li>
       </ul>
-      <div class="header__cart__price">item: <span>$150.00</span></div>
+      <div class="header__cart__price">item: <span>KES 150.00</span></div>
     </div>
     <div class="humberger__menu__widget">
       <div class="header__top__right__language">
@@ -116,7 +116,7 @@
         <div class="col-lg-6">
           <nav class="header__menu">
             <ul>
-              <li class="active"><a href="index">Home</a></li>
+              <li ><a href="index">Home</a></li>
               <li><a href="shop-grid">Shop</a></li>
               <li>
                 <a href="#">Pages</a>
@@ -128,7 +128,7 @@
                 </ul>
               </li>
               <li><a href="blog">Blog</a></li>
-              <li><a href="contact">Contact</a></li>
+              <li class="active"><a href="contact">Contact</a></li>
             </ul>
           </nav>
         </div>
@@ -137,16 +137,16 @@
             <ul>
               <li>
                 <a href="favourites"
-                  ><i class="fa fa-heart"></i> <span>1</span></a
+                  ><i class="fa fa-heart"></i> <span>0</span></a
                 >
               </li>
               <li>
                 <a href="cart"
-                  ><i class="fa fa-shopping-bag"></i> <span>3</span></a
+                  ><i class="fa fa-shopping-bag"></i> <span>0</span></a
                 >
               </li>
             </ul>
-            <div class="header__cart__price">item: <span>$150.00</span></div>
+            <div class="header__cart__price">item: <span>KES 150.00</span></div>
           </div>
         </div>
       </div>
@@ -167,13 +167,9 @@
               <span>All categories</span>
             </div>
             <ul>
-              <li><a href="department">Acrylic tumblers</a></li>
-              <li><a href="department">Stainless steel tumblers</a></li>
-              <li><a href="department">Wooden Gifts</a></li>
-              <li><a href="department">Glass Gifts</a></li>
-              <li><a href="department">Doormats</a></li>
-              <li><a href="department">Clothing</a></li>
-              <li><a href="department">Accessories </a></li>
+              <% categories.forEach(category => { %>
+              <li><a href="/department"><%= category.name %></a></li>
+              <% }); %>
             </ul>
           </div>
         </div>
@@ -194,7 +190,7 @@
                 <i class="fa fa-phone"></i>
               </div>
               <div class="hero__search__phone__text">
-                <h5>+65 11.188.888</h5>
+                <h5>0722545735</h5>
                 <span>support 24/7 time</span>
               </div>
             </div>

@@ -1,55 +1,62 @@
 // models/Product.js
-const { DataTypes } = require('sequelize');
-const sequelize = require('../db'); // Your database connection
+const { DataTypes } = require("sequelize");
+const sequelize = require("../db"); // Your database connection
 
-const Product = sequelize.define('Product', {
+const Product = sequelize.define("Product", {
   productid: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
   name: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   description: {
-    type: DataTypes.TEXT
+    type: DataTypes.TEXT,
   },
   imagesurl: {
-    type: DataTypes.ARRAY(DataTypes.STRING)
+    type: DataTypes.STRING,
+    get() {
+      const images = this.getDataValue("imagesurl");
+      return images ? JSON.parse(images) : [];
+    },
+    set(images) {
+      this.setDataValue("imagesurl", JSON.stringify(images));
+    },
   },
   cost: {
     type: DataTypes.DECIMAL(10, 2),
-    allowNull: false
+    allowNull: false,
   },
   price: {
     type: DataTypes.DECIMAL(10, 2),
-    allowNull: false
+    allowNull: false,
   },
   quantity: {
     type: DataTypes.INTEGER,
-    allowNull: false
+    allowNull: false,
   },
   size: {
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
   },
   weight: {
-    type: DataTypes.DECIMAL(10, 2)
+    type: DataTypes.DECIMAL(10, 2),
   },
   color: {
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
   },
   availability: {
     type: DataTypes.BOOLEAN,
-    defaultValue: true
+    defaultValue: true,
   },
   timestamp: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
+    defaultValue: DataTypes.NOW,
   },
   updatedby: {
-    type: DataTypes.STRING
-  }
+    type: DataTypes.STRING,
+  },
 });
 
 module.exports = Product;
