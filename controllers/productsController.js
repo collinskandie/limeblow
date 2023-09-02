@@ -10,6 +10,20 @@ async function getAllProducts(req, res) {
     res.status(500).json({ error: "Error fetching products" });
   }
 }
+async function getProduct(req, res) {
+  try {
+    const productId = parseInt(req.params.productId);
+    console.log(productId);
+    const product = await Product.findByPk(productId); // Use findByPk to find a product by its primary key
+    if (!product) {
+      return res.status(404).json({ error: "Product not found" });
+    }
+    res.status(200).json(product);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error fetching product" });
+  }
+}
 
 // Function to add a new product
 async function addProduct(req, res) {
@@ -104,4 +118,5 @@ module.exports = {
   getAllProducts,
   addProduct,
   generateTestProducts,
+  getProduct,
 };

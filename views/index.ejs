@@ -117,7 +117,7 @@
             <ul>
               <li class="active"><a href="index">Home</a></li>
               <li><a href="shop-grid">Shop</a></li>
-              <li>
+              <!-- <li>
                 <a href="#">Pages</a>
                 <ul class="header__menu__dropdown">
                   <li><a href="shop-details">Shop Details</a></li>
@@ -125,7 +125,7 @@
                   <li><a href="checkout">Check Out</a></li>
                   <li><a href="blog-details">Blog Details</a></li>
                 </ul>
-              </li>
+              </li> -->
               <li><a href="blog">Blog</a></li>
               <li><a href="contact">Contact</a></li>
             </ul>
@@ -136,12 +136,12 @@
             <ul>
               <li>
                 <a href="favourites"
-                  ><i class="fa fa-heart"></i> <span>1</span></a
+                  ><i class="fa fa-heart"></i> <span>0</span></a
                 >
               </li>
               <li>
                 <a href="cart"
-                  ><i class="fa fa-shopping-bag"></i> <span>3</span></a
+                  ><i class="fa fa-shopping-bag"></i> <span>0</span></a
                 >
               </li>
             </ul>
@@ -169,7 +169,11 @@
             </div>
             <ul>
               <% categories.forEach(category => { %>
-              <li><a href="/department"><%= category.name %></a></li>
+              <li>
+                <a href="/department/<%= category.id %>"
+                  ><%= category.name %></a
+                >
+              </li>
               <% }); %>
             </ul>
           </div>
@@ -198,7 +202,7 @@
           </div>
           <div class="hero__item set-bg" data-setbg="img/hero/banner.jpg">
             <div class="hero__text">
-              <span>FRUIT FRESH</span>
+              <span>Amazing Gifts</span>
               <h2>Gifts <br />100% handmade</h2>
               <p>Free Pickup and Delivery Available around Nairobi</p>
               <a href="shop-grid" class="primary-btn">SHOP NOW</a>
@@ -215,38 +219,21 @@
     <div class="container">
       <div class="row">
         <div class="categories__slider owl-carousel">
+          <% categories.forEach(category => { %>
           <div class="col-lg-3">
             <div
               class="categories__item set-bg"
-              data-setbg="img/cart/cart-1.jpg"
+              data-setbg="img/uploads/<%= Array.isArray(category.imageUrl) ? category.imageUrl[0] : category.imageUrl %>"
             >
-              <h5><a href="#">Acrylic tumblers</a></h5>
+              <h5>
+                <a href="/department/<%= category.id %>"
+                  ><%= category.name %></a
+                >
+              </h5>
             </div>
           </div>
-          <div class="col-lg-3">
-            <div
-              class="categories__item set-bg"
-              data-setbg="img/cart/cart-2.jpg"
-            >
-              <h5><a href="#">Stainless steel tumblers</a></h5>
-            </div>
-          </div>
-          <div class="col-lg-3">
-            <div
-              class="categories__item set-bg"
-              data-setbg="img/cart/cart-3.jpg"
-            >
-              <h5><a href="#">Wooden Gifts</a></h5>
-            </div>
-          </div>
-          <div class="col-lg-3">
-            <div
-              class="categories__item set-bg"
-              data-setbg="img/cart/cart-1.jpg"
-            >
-              <h5><a href="#">Glass Gifts </a></h5>
-            </div>
-          </div>
+          <!-- <li><a href="/department"><%= category.name %></a></li> -->
+          <% }); %>
         </div>
       </div>
     </div>
@@ -270,31 +257,41 @@
       </div>
       <div class="row featured__filter">
         <% products.forEach(product => { %>
-          <div class="col-lg-3 col-md-4 col-sm-6 mix oranges fresh-meat">
-            <div class="featured__item">
-              <div class="featured__item__pic set-bg"
-                data-setbg="img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[0] : product.imagesurl %>">
-                <ul class="featured__item__pic__hover">
-                  <li>
-                    <a href="#"><i class="fa fa-heart"></i></a>
-                  </li>
-                  <li>
-                    <a href="#"><i class="fa fa-retweet"></i></a>
-                  </li>
-                  <li>
-                    <a href="#"><i class="fa fa-shopping-cart"></i></a>
-                  </li>
-                </ul>
-              </div>
-              <div class="featured__item__text">
-                <h6><a href="/item-details/<%= product.productid %>"><%= product.name %></a></h6>
-                <h5><%= product.price %></h5>
-              </div>
+        <div class="col-lg-3 col-md-4 col-sm-6 mix oranges fresh-meat">
+          <div class="featured__item">
+            <div
+              class="featured__item__pic set-bg"
+              data-setbg="img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[0] : product.imagesurl %>"
+            >
+              <ul class="featured__item__pic__hover">
+                <li>
+                  <a href="#"><i class="fa fa-heart"></i></a>
+                </li>
+                <li>
+                  <!-- <a href="#"><i class="fa fa-retweet"></i></a> -->
+                </li>
+                <li>
+                  <a
+                    href="#"
+                    onclick="addToCart('<%= product.productid %>', '<%= product.name %>')"
+                  >
+                    <i class="fa fa-shopping-cart"></i>
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div class="featured__item__text">
+              <h6>
+                <a href="/item-details/<%= product.productid %>"
+                  ><%= product.name %></a
+                >
+              </h6>
+              <h5><%= product.price %></h5>
             </div>
           </div>
+        </div>
         <% }); %>
       </div>
-      
     </div>
   </section>
   <!-- Featured Section End -->
@@ -328,7 +325,10 @@
             <div class="latest-product__slider owl-carousel">
               <div class="latest-prdouct__slider__item">
                 <% latestproducts.forEach(latestproduct => { %>
-                <a href="#" class="latest-product__item">
+                <a
+                  href="/item-details/<%= latestproduct.productid %>"
+                  class="latest-product__item"
+                >
                   <div class="latest-product__item__pic">
                     <img
                       src="/img/uploads/<%= Array.isArray(latestproduct.imagesurl) ? latestproduct.imagesurl[0] : latestproduct.imagesurl %>"
@@ -344,20 +344,22 @@
               </div>
               <div class="latest-prdouct__slider__item">
                 <% latestproducts.forEach(latestproduct => { %>
-                  <a href="#" class="latest-product__item">
-                    <div class="latest-product__item__pic">
-                      <img
-                        src="/img/uploads/<%= Array.isArray(latestproduct.imagesurl) ? latestproduct.imagesurl[0] : latestproduct.imagesurl %>"
-                        
-                        alt="<%= latestproduct.name %>"
-                      />
-                    </div>
-                    <div class="latest-product__item__text">
-                      <h6><%= latestproduct.name %></h6>
-                      <span>KES <%= latestproduct.price %></span>
-                    </div>
-                  </a>
-                  <% }); %>
+                <a
+                  href="/item-details/<%= latestproduct.productid %>"
+                  class="latest-product__item"
+                >
+                  <div class="latest-product__item__pic">
+                    <img
+                      src="/img/uploads/<%= Array.isArray(latestproduct.imagesurl) ? latestproduct.imagesurl[0] : latestproduct.imagesurl %>"
+                      alt="<%= latestproduct.name %>"
+                    />
+                  </div>
+                  <div class="latest-product__item__text">
+                    <h6><%= latestproduct.name %></h6>
+                    <span>KES <%= latestproduct.price %></span>
+                  </div>
+                </a>
+                <% }); %>
               </div>
             </div>
           </div>
@@ -367,62 +369,42 @@
             <h4>Top Rated Products</h4>
             <div class="latest-product__slider owl-carousel">
               <div class="latest-prdouct__slider__item">
-                <a href="#" class="latest-product__item">
+                <% latestproducts.forEach(latestproduct => { %>
+                <a
+                  href="/item-details/<%= latestproduct.productid %>"
+                  class="latest-product__item"
+                >
                   <div class="latest-product__item__pic">
-                    <img src="img/latest-product/lp-1.jpg" alt="" />
+                    <img
+                      src="/img/uploads/<%= Array.isArray(latestproduct.imagesurl) ? latestproduct.imagesurl[0] : latestproduct.imagesurl %>"
+                      alt="<%= latestproduct.name %>"
+                    />
                   </div>
                   <div class="latest-product__item__text">
-                    <h6>Crab Pool Security</h6>
-                    <span>KES 30.00</span>
+                    <h6><%= latestproduct.name %></h6>
+                    <span>KES <%= latestproduct.price %></span>
                   </div>
                 </a>
-                <a href="#" class="latest-product__item">
-                  <div class="latest-product__item__pic">
-                    <img src="img/latest-product/lp-2.jpg" alt="" />
-                  </div>
-                  <div class="latest-product__item__text">
-                    <h6>Crab Pool Security</h6>
-                    <span>KES 30.00</span>
-                  </div>
-                </a>
-                <a href="#" class="latest-product__item">
-                  <div class="latest-product__item__pic">
-                    <img src="img/latest-product/lp-3.jpg" alt="" />
-                  </div>
-                  <div class="latest-product__item__text">
-                    <h6>Crab Pool Security</h6>
-                    <span>KES 30.00</span>
-                  </div>
-                </a>
+                <% }); %>
               </div>
               <div class="latest-prdouct__slider__item">
-                <a href="#" class="latest-product__item">
+                <% latestproducts.forEach(latestproduct => { %>
+                <a
+                  href="/item-details/<%= latestproduct.productid %>"
+                  class="latest-product__item"
+                >
                   <div class="latest-product__item__pic">
-                    <img src="img/latest-product/lp-1.jpg" alt="" />
+                    <img
+                      src="/img/uploads/<%= Array.isArray(latestproduct.imagesurl) ? latestproduct.imagesurl[0] : latestproduct.imagesurl %>"
+                      alt="<%= latestproduct.name %>"
+                    />
                   </div>
                   <div class="latest-product__item__text">
-                    <h6>Crab Pool Security</h6>
-                    <span>KES 30.00</span>
+                    <h6><%= latestproduct.name %></h6>
+                    <span>KES <%= latestproduct.price %></span>
                   </div>
                 </a>
-                <a href="#" class="latest-product__item">
-                  <div class="latest-product__item__pic">
-                    <img src="img/latest-product/lp-2.jpg" alt="" />
-                  </div>
-                  <div class="latest-product__item__text">
-                    <h6>Crab Pool Security</h6>
-                    <span>KES 30.00</span>
-                  </div>
-                </a>
-                <a href="#" class="latest-product__item">
-                  <div class="latest-product__item__pic">
-                    <img src="img/latest-product/lp-3.jpg" alt="" />
-                  </div>
-                  <div class="latest-product__item__text">
-                    <h6>Crab Pool Security</h6>
-                    <span>KES 30.00</span>
-                  </div>
-                </a>
+                <% }); %>
               </div>
             </div>
           </div>
@@ -432,62 +414,42 @@
             <h4>Review Products</h4>
             <div class="latest-product__slider owl-carousel">
               <div class="latest-prdouct__slider__item">
-                <a href="#" class="latest-product__item">
+                <% latestproducts.forEach(latestproduct => { %>
+                <a
+                  href="/item-details/<%= latestproduct.productid %>"
+                  class="latest-product__item"
+                >
                   <div class="latest-product__item__pic">
-                    <img src="img/latest-product/lp-1.jpg" alt="" />
+                    <img
+                      src="/img/uploads/<%= Array.isArray(latestproduct.imagesurl) ? latestproduct.imagesurl[0] : latestproduct.imagesurl %>"
+                      alt="<%= latestproduct.name %>"
+                    />
                   </div>
                   <div class="latest-product__item__text">
-                    <h6>Crab Pool Security</h6>
-                    <span>KES 30.00</span>
+                    <h6><%= latestproduct.name %></h6>
+                    <span>KES <%= latestproduct.price %></span>
                   </div>
                 </a>
-                <a href="#" class="latest-product__item">
-                  <div class="latest-product__item__pic">
-                    <img src="img/latest-product/lp-2.jpg" alt="" />
-                  </div>
-                  <div class="latest-product__item__text">
-                    <h6>Crab Pool Security</h6>
-                    <span>KES 30.00</span>
-                  </div>
-                </a>
-                <a href="#" class="latest-product__item">
-                  <div class="latest-product__item__pic">
-                    <img src="img/latest-product/lp-3.jpg" alt="" />
-                  </div>
-                  <div class="latest-product__item__text">
-                    <h6>Crab Pool Security</h6>
-                    <span>KES 30.00</span>
-                  </div>
-                </a>
+                <% }); %>
               </div>
               <div class="latest-prdouct__slider__item">
-                <a href="#" class="latest-product__item">
+                <% latestproducts.forEach(latestproduct => { %>
+                <a
+                  href="/item-details/<%= latestproduct.productid %>"
+                  class="latest-product__item"
+                >
                   <div class="latest-product__item__pic">
-                    <img src="img/latest-product/lp-1.jpg" alt="" />
+                    <img
+                      src="/img/uploads/<%= Array.isArray(latestproduct.imagesurl) ? latestproduct.imagesurl[0] : latestproduct.imagesurl %>"
+                      alt="<%= latestproduct.name %>"
+                    />
                   </div>
                   <div class="latest-product__item__text">
-                    <h6>Crab Pool Security</h6>
-                    <span>KES 30.00</span>
+                    <h6><%= latestproduct.name %></h6>
+                    <span>KES <%= latestproduct.price %></span>
                   </div>
                 </a>
-                <a href="#" class="latest-product__item">
-                  <div class="latest-product__item__pic">
-                    <img src="img/latest-product/lp-2.jpg" alt="" />
-                  </div>
-                  <div class="latest-product__item__text">
-                    <h6>Crab Pool Security</h6>
-                    <span>KES 30.00</span>
-                  </div>
-                </a>
-                <a href="#" class="latest-product__item">
-                  <div class="latest-product__item__pic">
-                    <img src="img/latest-product/lp-3.jpg" alt="" />
-                  </div>
-                  <div class="latest-product__item__text">
-                    <h6>Crab Pool Security</h6>
-                    <span>KES 30.00</span>
-                  </div>
-                </a>
+                <% }); %>
               </div>
             </div>
           </div>
@@ -645,6 +607,7 @@
       </div>
     </div>
   </footer>
+  <!-- <script src="/js/add2Cart.js"></script> -->
 
   <script>
     fetch("/api/categories")

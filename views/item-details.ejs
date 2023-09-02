@@ -240,22 +240,22 @@
             <div class="product__details__pic__slider owl-carousel">
               <img
                 data-imgbigurl="img/product/details/product-details-2.jpg"
-                src="img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[0] : product.imagesurl %>"
+                src="img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[1] : product.imagesurl %>"
                 alt=""
               />
               <img
                 data-imgbigurl="img/product/details/product-details-3.jpg"
-                src="img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[0] : product.imagesurl %>"
+                src="img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[2] : product.imagesurl %>"
                 alt=""
               />
               <img
                 data-imgbigurl="img/product/details/product-details-5.jpg"
-                src="img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[0] : product.imagesurl %>"
+                src="img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[3] : product.imagesurl %>"
                 alt=""
               />
               <img
                 data-imgbigurl="img/product/details/product-details-4.jpg"
-                src="img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[0] : product.imagesurl %>"
+                src="img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[4] : product.imagesurl %>"
                 alt=""
               />
             </div>
@@ -263,7 +263,7 @@
         </div>
         <div class="col-lg-6 col-md-6">
           <div class="product__details__text">
-            <h3>Vetgetable’s Package</h3>
+            <h3><%= product.name %></h3>
             <div class="product__details__rating">
               <i class="fa fa-star"></i>
               <i class="fa fa-star"></i>

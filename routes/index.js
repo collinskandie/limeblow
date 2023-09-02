@@ -7,6 +7,7 @@ const categoriesController = require('../controllers/categoriesController');
 
 // #products api 
 router.get('/products', productsController.getAllProducts);
+router.get('/productsbyId/:productId', productsController.getProduct);
 router.post('/addproducts', productsController.addProduct);
 router.get('/generate-test-products', productsController.generateTestProducts);
 // router.get('/copy', copyImage);
