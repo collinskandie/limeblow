@@ -32,16 +32,16 @@ const Customer = sequelize.define("Customer", {
     type: DataTypes.STRING,
   },
   confirmationCode: {
-    type: DataTypes.STRING, // Add the field for the one-time code
-    allowNull: true, // Allow it to be null until it's generated
+    type: DataTypes.STRING, 
+    allowNull: true, 
   },
   confirmed: {
-    type: DataTypes.BOOLEAN, // Add the field for confirmation status
-    defaultValue: false, // Set it to false by default
+    type: DataTypes.BOOLEAN,
+    defaultValue: false, 
   },
   password: {
-    type: DataTypes.STRING, // Add the field for the password
-    allowNull: false, // Make it required
+    type: DataTypes.STRING, 
+    allowNull: false,
   },
 });
 

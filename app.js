@@ -1,15 +1,26 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const expressLayouts = require("express-ejs-layouts");
+const session = require('express-session');
+
 const sequelize = require("./db");
 const Category = require("./models/Category");
 require("dotenv").config();
 const app = express();
 
-const apiRouter = require("./routes/index"); // Change this to your product router
+const apiRouter = require("./routes/index");
+const usersController = require('./controllers/usersController');
 const Product = require("./models/Product");
 
-const port = process.env.PORT || 3000; // Use a default port if PORT is not set in .env
+const port = process.env.PORT || 3000;
+app.use(
+  session({
+    secret: process.env.SECRETE, // Replace with your own secret key
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false }, // Adjust settings as needed
+  })
+);
 
 // Middleware to log requests
 app.use((req, res, next) => {
@@ -26,6 +37,7 @@ app.use(bodyParser.json());
 
 // Mount your API routes
 app.use("/api", apiRouter);
+app.post('/login', usersController.login);
 
 // Define your other routes here
 

@@ -45,7 +45,9 @@
   </div>
   <nav class="humberger__menu__nav mobile-menu">
     <ul>
-      <li class="<%= title === 'Home' ? 'active' : '' %>"><a href="/">Home</a></li>
+      <li class="<%= title === 'Home' ? 'active' : '' %>">
+        <a href="/">Home</a>
+      </li>
       <li><a href="shop-grid">Shop</a></li>
       <li class="<%= title === 'Home' ? 'active' : '' %>">
         <a href="#">Pages</a>
@@ -102,12 +104,11 @@
               <div>English</div>
               <span class="arrow_carrot-down"></span>
               <ul>
-              
                 <li><a href="#">English</a></li>
               </ul>
             </div>
             <div class="header__top__right__auth">
-              <a href="login"><i class="fa fa-user"></i> Login</a>
+              <a id="authLink" href="login"><i class="fa fa-user"></i> Login</a>
             </div>
           </div>
         </div>
@@ -124,11 +125,19 @@
       <div class="col-lg-6">
         <nav class="header__menu">
           <ul>
-            <li class="<%= title === 'Home' ? 'active' : '' %>"><a href="index">Home</a></li>
-            <li class="<%= title === 'Shop' ? 'active' : '' %>"><a href="shop-grid">Shop</a></li>
-            
-            <li class="<%= title === 'Blog' ? 'active' : '' %>"><a href="blog">Blog</a></li>
-            <li class="<%= title === 'Contact Us' ? 'active' : '' %>"><a href="contact">Contact</a></li>
+            <li class="<%= title === 'Home' ? 'active' : '' %>">
+              <a href="index">Home</a>
+            </li>
+            <li class="<%= title === 'Shop' ? 'active' : '' %>">
+              <a href="shop-grid">Shop</a>
+            </li>
+
+            <li class="<%= title === 'Blog' ? 'active' : '' %>">
+              <a href="blog">Blog</a>
+            </li>
+            <li class="<%= title === 'Contact Us' ? 'active' : '' %>">
+              <a href="contact">Contact</a>
+            </li>
           </ul>
         </nav>
       </div>
@@ -158,4 +167,3 @@
     </div>
   </div>
 </header>
-

@@ -3,9 +3,8 @@ const express = require('express');
 const router = express.Router();
 const productsController = require('../controllers/productsController'); 
 const categoriesController = require('../controllers/categoriesController'); 
-// const copyImage = require('../controllers/pasteImages'); 
-// const users = require("./users");
-const usersRouter = require("./users"); // Require the users router
+const authenticateToken = require('../middleware/authenticateToken'); // use this for api routes that needs to be verified for auth
+const usersRouter = require("./users"); 
 
 // #products api 
 router.get('/products', productsController.getAllProducts);
