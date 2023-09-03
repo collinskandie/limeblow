@@ -1,0 +1,85 @@
+<section class="login spad">
+  <div class="container">
+    <h2>Sign Up</h2>
+    <% if (typeof error !== 'undefined') { %>
+    <div class="alert alert-danger"><%= error %></div>
+    <% } %>
+    <form method="POST">
+      <%- include('billingform.ejs') %>
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="checkout__input">
+            <p>Password<span>*</span></p>
+            <input
+              type="password"
+              name="password"
+              placeholder="Type a eunique password"
+            />
+          </div>
+          <div class="checkout__input">
+            <p>Confirm Password<span>*</span></p>
+            <input
+              type="password"
+              name="confirm_password"
+              placeholder="Type a eunique password"
+            />
+          </div>
+        </div>
+      </div>
+      <button type="submit" class="site-btn">Sign Up</button>
+    </form>
+  </div>
+</section>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $("form").submit(function (event) {
+      event.preventDefault(); // Prevent the default form submission
+      // Serialize the form data
+      var formData = $(this).serialize();
+
+      // Make an AJAX POST request to the API
+      $.ajax({
+        type: "POST",
+        url: "http://localhost:3000/api/users/signup",
+        data: formData,
+        success: function (response) {
+          // Handle the success response here
+          console.log("Success:", response);
+
+          // Display a Bootstrap toast notification with a button
+          var toast = `<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
+                        <div class="toast-header">
+                          <strong class="mr-auto">Success</strong>
+                          <button type="button" class="ml-2 mb-1 close" data-dismiss="toast" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="toast-body">
+                          ${response.message}
+                        </div>
+                        <div class="toast-footer">
+                          <button type="button" class="btn btn-primary btn-sm" id="okButton">OK</button>
+                        </div>
+                      </div>`;
+
+          // Append the toast to the body and show it
+          $("body").append(toast);
+          var toastElement = $(".toast");
+          toastElement.toast({ autohide: false }).toast("show");
+
+          // Add a click event listener to the "OK" button
+          $("#okButton").click(function () {
+            // Redirect to the login page
+            window.location.href = "/login"; // Replace with your login page URL
+          });
+        },
+        error: function (error) {
+          // Handle the error response here
+          console.error("Error:", error);
+          // You can display an error message to the user if needed
+        },
+      });
+    });
+  });
+</script>

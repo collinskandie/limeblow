@@ -4,6 +4,8 @@ const router = express.Router();
 const productsController = require('../controllers/productsController'); 
 const categoriesController = require('../controllers/categoriesController'); 
 // const copyImage = require('../controllers/pasteImages'); 
+// const users = require("./users");
+const usersRouter = require("./users"); // Require the users router
 
 // #products api 
 router.get('/products', productsController.getAllProducts);
@@ -15,6 +17,9 @@ router.get('/generate-test-products', productsController.generateTestProducts);
 // categories
 router.get('/categories', categoriesController.getAllCategories);
 router.post('/addcategories', categoriesController.AddCategories);
+//manage users
+router.use('/users', usersRouter);
 
 
 module.exports = router;
+ 

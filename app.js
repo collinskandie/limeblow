@@ -31,11 +31,11 @@ app.use("/api", apiRouter);
 
 app.get("/", async (req, res) => {
   try {
-    const categories = await Category.findAll(); // Fetch categories from the database
+    const categories = await Category.findAll();
     const products = await Product.findAll();
     const latestproducts = await Product.findAll({
-      order: [["createdAt", "DESC"]], // Order the results by createdAt in descending order
-      limit: 3, // Limit the result to the last 10 items
+      order: [["createdAt", "DESC"]],
+      limit: 3,
     });
 
     res.render("index", {
@@ -44,7 +44,7 @@ app.get("/", async (req, res) => {
       categories,
       products,
       latestproducts,
-    }); // Pass categories to the view
+    });
   } catch (error) {
     console.error(error);
     res.render("index", {
@@ -53,16 +53,16 @@ app.get("/", async (req, res) => {
       categories: [],
       product: [],
       latestproducts: [],
-    }); // Handle error
+    });
   }
 });
 app.get("/index", async (req, res) => {
   try {
-    const categories = await Category.findAll(); // Fetch categories from the database
+    const categories = await Category.findAll();
     const products = await Product.findAll();
     const latestproducts = await Product.findAll({
-      order: [["createdAt", "DESC"]], // Order the results by createdAt in descending order
-      limit: 3, // Limit the result to the last 10 items
+      order: [["createdAt", "DESC"]],
+      limit: 3,
     });
 
     res.render("index", {
@@ -71,7 +71,7 @@ app.get("/index", async (req, res) => {
       categories,
       products,
       latestproducts,
-    }); // Pass categories to the view
+    });
   } catch (error) {
     console.error(error);
     res.render("index", {
@@ -80,71 +80,76 @@ app.get("/index", async (req, res) => {
       categories: [],
       product: [],
       latestproducts: [],
-    }); // Handle error
+    });
   }
 });
 app.get("/contact", async (req, res) => {
   try {
-    const categories = await Category.findAll(); // Fetch categories from the database
+    const categories = await Category.findAll();
     res.render("contact", {
       title: "Contact Us",
       layout: "layouts/master",
       categories,
-    }); // Pass categories to the view
+    });
   } catch (error) {
     console.error(error);
     res.render("contact", {
       title: "Contact Us",
       layout: "layouts/master",
       categories: [],
-    }); // Handle error
+    });
   }
 });
 app.get("/blog", async (req, res) => {
   try {
-    const categories = await Category.findAll(); // Fetch categories from the database
-    res.render("blog", { title: "Blog", layout: "layouts/master", categories }); // Pass categories to the view
+    const categories = await Category.findAll();
+    res.render("blog", { title: "Blog", layout: "layouts/master", categories });
   } catch (error) {
     console.error(error);
     res.render("blog", {
       title: "Blog",
       layout: "layouts/master",
       categories: [],
-    }); // Handle error
+    });
   }
 });
 app.get("/checkout", async (req, res) => {
   try {
-    const categories = await Category.findAll(); // Fetch categories from the database
+    const categories = await Category.findAll();
+    // Check if user session exists
+    const userSessionExists = req.session && req.session.user; // Modify this based on your session management logic
+
     res.render("checkout", {
       title: "Checkout",
       layout: "layouts/master",
       categories,
-    }); // Pass categories to the view
+      userSessionExists, // Pass the session status to the view
+    });
   } catch (error) {
     console.error(error);
     res.render("checkout", {
       title: "Checkout",
       layout: "layouts/master",
       categories: [],
-    }); // Handle error
+    });
   }
 });
+
 app.get("/shop-details", async (req, res) => {
   try {
-    const categories = await Category.findAll(); // Fetch categories from the database
+    const categories = await Category.findAll();
     res.render("shop-details", {
       title: "Shop Details",
       layout: "layouts/master",
       categories,
-    }); // Pass categories to the view
+    });
   } catch (error) {
     console.error(error);
     res.render("shop-details", {
       title: "Shop Details",
       layout: "layouts/master",
       categories: [],
-    }); // Handle error
+    });
   }
 });
 
@@ -165,7 +170,7 @@ app.get("/blog-details", async (req, res) => {
     });
   }
 });
-app.get("/shoping-cart", async (req, res) => {
+app.get("/cart", async (req, res) => {
   try {
     const categories = await Category.findAll();
     res.render("shoping-cart", {
@@ -184,20 +189,39 @@ app.get("/shoping-cart", async (req, res) => {
 });
 app.get("/shop-grid", async (req, res) => {
   try {
-    const categories = await Category.findAll(); // Fetch categories from the database
+    const categories = await Category.findAll();
+    const products = await Product.findAll();
+    const latestproducts = await Product.findAll({
+      order: [["createdAt", "DESC"]],
+      limit: 3,
+    });
     res.render("shop-grid", {
       title: "Shop",
       layout: "layouts/master",
       categories,
-    }); // Pass categories to the view
+      products,
+      latestproducts,
+    });
   } catch (error) {
     console.error(error);
     res.render("shop-grid", {
       title: "Shop",
       layout: "layouts/master",
       categories: [],
-    }); // Handle error
+    });
   }
+});
+app.get("/login", (req, res) => {
+  res.render("login", {
+    title: "Login",
+    layout: "layouts/master",
+  });
+});
+app.get("/signup", (req, res) => {
+  const userSessionExists = req.session && req.session.user; // Modify this based on your session management logic
+  res.render("signup", { title: "Sign Up", layout: "layouts/master",
+  userSessionExists, // Pass the session status to the view
+ });
 });
 
 //page redirects
@@ -205,7 +229,7 @@ app.get("/item-details/:productId", async (req, res) => {
   try {
     const productId = req.params.productId;
     const product = await Product.findByPk(productId); // Find product by ID
-    const categories = await Category.findAll(); // Fetch categories from the database
+    const categories = await Category.findAll();
 
     if (!product) {
       return res.status(404).json({ error: "Product not found" });
