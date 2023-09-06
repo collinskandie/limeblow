@@ -1,3 +1,4 @@
+const { default: axios } = require("axios");
 const jwt = require("jsonwebtoken");
 
 function authenticateToken(req, res, next) {
@@ -16,5 +17,31 @@ function authenticateToken(req, res, next) {
     next();
   });
 }
+const generateToken = async (req, res, next) => {
+  const secrete = process.env.MPESA_CONSUMER_SECRETE;
+  const consumer_key = process.env.MPESA_CONSUMER_KEY;
+  const auth = new Buffer.from(`${consumer_key}:${secrete}`).toString("base64");
 
-module.exports = authenticateToken;
+  await axios
+    .get(
+      "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials",
+      {
+        headers: {
+          authorization: `Basic ${auth}`,
+        },
+      }
+    )
+    .then((resp) => {
+      token = resp.data.access_token;
+      next();
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(400).json(error.message);
+    });
+};
+
+module.exports = {
+  authenticateToken,
+  generateToken,
+};

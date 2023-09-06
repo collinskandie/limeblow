@@ -17,7 +17,6 @@
           <% console.log(userSessionExists); %> <% if (!userSessionExists) { %>
           <%- include('billingform.ejs') %> <% } %> <% if (userSessionExists) {
           %> <%- include('billingoptions.ejs') %> <% } %>
-
           <div class="col-lg-4 col-md-6">
             <div class="checkout__order">
               <h4>Your Order</h4>
@@ -27,7 +26,6 @@
               <ul id="cartItemList">
                 <!-- Cart items will be dynamically added here -->
               </ul>
-
               <div class="checkout__order__total">
                 Total <span>KES 00.00</span>
               </div>

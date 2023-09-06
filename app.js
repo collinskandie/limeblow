@@ -146,6 +146,25 @@ app.get("/checkout", async (req, res) => {
     });
   }
 });
+app.get("/payments", async (req, res) => {
+  try {
+    const categories = await Category.findAll();   
+    const userSessionExists = req.session && req.session.user; 
+    res.render("payments", {
+      title: "Payments",
+      layout: "layouts/master",
+      categories,
+      userSessionExists, 
+    });
+  } catch (error) {
+    console.error(error);
+    res.render("checkout", {
+      title: "Checkout",
+      layout: "layouts/master",
+      categories: [],
+    });
+  }
+});
 
 app.get("/shop-details", async (req, res) => {
   try {

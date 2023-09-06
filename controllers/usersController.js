@@ -9,7 +9,7 @@ async function AddUsers(req, res) {
     const {
       first_name,
       last_name,
-      county, 
+      county,
       address,
       town_city,
       street,
@@ -18,7 +18,6 @@ async function AddUsers(req, res) {
       email,
       password,
     } = req.body;
-
     const confirmationCode = generateRandomCode(6);
     const newCustomer = await Customer.create({
       name: first_name,
@@ -26,12 +25,9 @@ async function AddUsers(req, res) {
       phone: phone,
       confirmationCode: confirmationCode,
       password: password,
-    });
-    //add password to table and enscrypt it.
+    });    
     console.log(password);
-
-    const userId = newCustomer.id; // Access the customer's ID
-
+    const userId = newCustomer.id; 
     const custom_address = billingAdress(
       first_name,
       last_name,
@@ -43,14 +39,12 @@ async function AddUsers(req, res) {
       phone,
       email,
       userId
-    );
-    // sendMail(email, confirmationCode);
-    sendMail(email, confirmationCode);
-    // Inside the success block of AddUsers function
+    );    
+    sendMail(email, confirmationCode);    
     return res.status(201).json({
       success: true,
       message: "Account created successfully",
-      customerId: userId, // Include the customer ID in the response
+      customerId: userId,
       customer: newCustomer,
       address: custom_address,
     });
@@ -59,10 +53,8 @@ async function AddUsers(req, res) {
     res.status(500).json({ error: "Error addding customer" });
   }
 }
-//login controller
 async function login(req, res) {
-  try {
-    // console.log(req.body);
+  try {    
     const { email, password } = req.body;
     const customer = await Customer.findOne({ where: { email } });
     if (!customer) {
@@ -77,18 +69,13 @@ async function login(req, res) {
         .status(401)
         .json({ message: "Authentication failed. Incorrect password." });
     }
-
     const token = jwt.sign({ customerId: customer.id }, process.env.SECRETE, {
-      expiresIn: "1h", // Token expiration time
+      expiresIn: "1h",
     });
     req.session.userSessionExists = true;
-    // You can also store additional user information in the session if needed
     req.session.user = {
-      username: customer.name, // Replace with the user's username
-      // Add other user-related data here
+      username: customer.name,
     };
-    // console.log(status(200));
-
     res.status(200).json({
       success: true,
       message: "Authentication successful",
@@ -102,7 +89,7 @@ async function login(req, res) {
 }
 async function addAddress(req, res) {
   try {
-    console.log(req)
+    console.log(req);
     const {
       first_name,
       last_name,
@@ -114,6 +101,7 @@ async function addAddress(req, res) {
       phone,
       email,
     } = req.body;
+    const selectedPaymentMethod = req.body.payment_method;
     const userId = 0;
     const custom_address = billingAdress(
       first_name,
@@ -125,7 +113,8 @@ async function addAddress(req, res) {
       post_code,
       phone,
       email,
-      userId
+      userId,
+      selectedPaymentMethod
     );
     return res.status(201).json({
       success: true,
@@ -137,7 +126,6 @@ async function addAddress(req, res) {
     res.status(500).json({ error: "Error customer addresss" });
   }
 }
-
 async function billingAdress(
   firstName,
   lastName,
@@ -148,7 +136,8 @@ async function billingAdress(
   postcode,
   phone,
   email,
-  userId
+  userId,
+  payment_method
 ) {
   try {
     state = "Kenya";
@@ -164,6 +153,7 @@ async function billingAdress(
       phone,
       email,
       userId,
+      payment_method,
     });
     return newBillingAdress;
   } catch (error) {
@@ -180,7 +170,6 @@ function generateRandomCode(length) {
     const randomIndex = crypto.randomInt(0, characters.length);
     code += characters.charAt(randomIndex);
   }
-
   return code;
 }
 module.exports = {
