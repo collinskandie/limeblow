@@ -7,9 +7,11 @@ const transporter = nodemailer.createTransport({
     user: "collins.kiptoo@renga.tech", // Your SMTP username
     pass: "#Collins12#", // Your SMTP password
   },
-  tls: {
-    rejectUnauthorized: false, // Bypass certificate validation (not recommended for production)
-  },
+  // tls: {
+  //   rejectUnauthorized: false, // Bypass certificate validation (not recommended for production)
+  // },
 });
 
 module.exports = transporter;
+
+
