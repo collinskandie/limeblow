@@ -46,6 +46,10 @@ const BillingDetails = sequelize.define("BillingDetails", {
     type: DataTypes.INTEGER,
     allowNull: true, // Accepts null for userId
   },
+  defaultPayment: {
+    type: DataTypes.STRING, // Assuming it's a string value
+    allowNull: true, // Adjust as needed
+  },
 });
 
 module.exports = BillingDetails;

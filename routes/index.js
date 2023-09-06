@@ -17,7 +17,7 @@ router.get('/generate-test-products', productsController.generateTestProducts);
 router.get('/categories', categoriesController.getAllCategories);
 router.post('/addcategories', categoriesController.AddCategories);
 //manage users
-router.use('/users', usersRouter);
+router.use('/users', usersRouter); 
 
 
 module.exports = router;

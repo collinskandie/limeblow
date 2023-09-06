@@ -1,79 +1,118 @@
-<body>
-  <%- include('hero.ejs') %>
-  <section class="checkout spad">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-12">
-          <h6>
-            <span class="icon_tag_alt"></span> Have a coupon?
-            <a href="#">Click here</a> to enter your code
-          </h6>
-        </div>
-      </div>
-      <div class="checkout__form">
-        <h4>Billing Details</h4>
-        <form action="#">
-          <div class="row">
-            <% console.log(userSessionExists); %> <% if (!userSessionExists) {
-            %> <%- include('billingform.ejs') %> <% } %> <% if
-            (userSessionExists) { %> <%- include('billingoptions.ejs') %> <% }
-            %>
-
-            <div class="col-lg-4 col-md-6">
-              <div class="checkout__order">
-                <h4>Your Order</h4>
-                <div class="checkout__order__products">
-                  Products <span>Total</span>
-                </div>
-                <ul id="cartItemList">
-                  <!-- Cart items will be dynamically added here -->
-                </ul>
-
-                <div class="checkout__order__total">
-                  Total <span>KES 00.00</span>
-                </div>
-                <div class="checkout__input__checkbox">
-                  <label for="acc-or">
-                    Create an account?
-                    <input type="checkbox" id="acc-or" />
-                    <span class="checkmark"></span>
-                  </label>
-                </div>
-                <p>Create account for Easy checkout next time.</p>
-                <div class="checkout__input__checkbox">
-                  <label for="payment">
-                    Mpesa
-                    <input type="checkbox" id="payment" />
-                    <span class="checkmark"></span>
-                  </label>
-                </div>
-                <div class="checkout__input__checkbox">
-                  <label for="paypal">
-                    Paypal
-                    <input type="checkbox" id="paypal" />
-                    <span class="checkmark"></span>
-                  </label>
-                </div>
-                <button type="submit" class="site-btn">PLACE ORDER</button>
-              </div>
-            </div>
-          </div>
-        </form>
+<!-- <body> -->
+<%- include('hero.ejs') %>
+<section class="checkout spad">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <h6>
+          <span class="icon_tag_alt"></span> Have a coupon?
+          <a href="#">Click here</a> to enter your code
+        </h6>
       </div>
     </div>
-  </section>
-  <script>
-    const storedCartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
-    const cartItemList = document.getElementById("cartItemList");
-    let totalPrice = 0;
-    storedCartItems.forEach((item) => {
-      const liElement = document.createElement("li");
-      const itemTotalPrice = (item.price * item.quantity).toFixed(2);
-      totalPrice += item.price * item.quantity;
-      liElement.innerHTML = `${item.product_name} <span>KES ${itemTotalPrice}</span>`;
-      cartItemList.appendChild(liElement);
+    <div class="checkout__form">
+      <h4>Billing Details</h4>
+      <form method="POST">
+        <div class="row">
+          <% console.log(userSessionExists); %> <% if (!userSessionExists) { %>
+          <%- include('billingform.ejs') %> <% } %> <% if (userSessionExists) {
+          %> <%- include('billingoptions.ejs') %> <% } %>
+
+          <div class="col-lg-4 col-md-6">
+            <div class="checkout__order">
+              <h4>Your Order</h4>
+              <div class="checkout__order__products">
+                Products <span>Total</span>
+              </div>
+              <ul id="cartItemList">
+                <!-- Cart items will be dynamically added here -->
+              </ul>
+
+              <div class="checkout__order__total">
+                Total <span>KES 00.00</span>
+              </div>
+              <div class="checkout__input__checkbox">
+                <label for="payment1">
+                  Mpesa
+                  <input type="checkbox" id="payment1" value="mpesa" name="payment_method" />
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <div class="checkout__input__checkbox">
+                <label for="payment2">
+                  Credit/Debit Card
+                  <input type="checkbox" id="payment2" value="card" name="payment_method" />
+                  <span class="checkmark"></span>
+                </label>
+              </div>
+              <button type="submit" class="site-btn">PLACE ORDER</button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $("form").submit(function (event) {
+      event.preventDefault(); // Prevent the default form submission
+      // Serialize the form data
+      var formData = $(this).serialize();
+
+      // Make an AJAX POST request to the API
+      $.ajax({
+        type: "POST",
+        url: "http://localhost:3000/api/users/newaddress",
+        data: formData,
+        success: function (response) {
+          // Handle the success response here
+          console.log("Success:", response);
+
+          // Display a Bootstrap toast notification with a button
+          alert(response.message);
+          window.location.href = "/payments";         
+        },
+        error: function (error) {
+          // Handle the error response here
+          console.error("Error:", error);
+          // You can display an error message to the user if needed
+        },
+      });
     });
-    const totalElement = document.querySelector(".checkout__order__total span");
-    totalElement.textContent = `KES ${totalPrice.toFixed(2)}`;
-  </script>
-</body>
+  });
+  const storedCartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+  const cartItemList = document.getElementById("cartItemList");
+  let totalPrice = 0;
+  storedCartItems.forEach((item) => {
+    const liElement = document.createElement("li");
+    const itemTotalPrice = (item.price * item.quantity).toFixed(2);
+    totalPrice += item.price * item.quantity;
+    liElement.innerHTML = `${item.product_name} <span>KES ${itemTotalPrice}</span>`;
+    cartItemList.appendChild(liElement);
+  });
+  const totalElement = document.querySelector(".checkout__order__total span");
+  totalElement.textContent = `KES ${totalPrice.toFixed(2)}`;
+
+  // Get references to the checkboxes
+  const payment1Checkbox = document.getElementById("payment1");
+  const payment2Checkbox = document.getElementById("payment2");
+
+  // Add an event listener to each checkbox
+  payment1Checkbox.addEventListener("change", function () {
+    if (payment1Checkbox.checked) {
+      // If the first checkbox is checked, uncheck the second one
+      payment2Checkbox.checked = false;
+    }
+  });
+
+  payment2Checkbox.addEventListener("change", function () {
+    if (payment2Checkbox.checked) {
+      // If the second checkbox is checked, uncheck the first one
+      payment1Checkbox.checked = false;
+    }
+  });
+</script>
+
+<!-- </body> -->

@@ -9,7 +9,7 @@ async function AddUsers(req, res) {
     const {
       first_name,
       last_name,
-      county,
+      county, 
       address,
       town_city,
       street,
@@ -100,6 +100,44 @@ async function login(req, res) {
     res.status(500).json({ error: "Server error" });
   }
 }
+async function addAddress(req, res) {
+  try {
+    console.log(req)
+    const {
+      first_name,
+      last_name,
+      county,
+      address,
+      town_city,
+      street,
+      post_code,
+      phone,
+      email,
+    } = req.body;
+    const userId = 0;
+    const custom_address = billingAdress(
+      first_name,
+      last_name,
+      county,
+      address,
+      town_city,
+      street,
+      post_code,
+      phone,
+      email,
+      userId
+    );
+    return res.status(201).json({
+      success: true,
+      message: "Address added successfuly",
+      address: custom_address,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error customer addresss" });
+  }
+}
+
 async function billingAdress(
   firstName,
   lastName,
@@ -127,7 +165,6 @@ async function billingAdress(
       email,
       userId,
     });
-
     return newBillingAdress;
   } catch (error) {
     console.error(error);
@@ -149,4 +186,5 @@ function generateRandomCode(length) {
 module.exports = {
   AddUsers,
   login,
+  addAddress,
 };
