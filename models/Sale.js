@@ -1,30 +1,31 @@
-// models/Sale.js
-const { DataTypes } = require('sequelize');
-const sequelize = require('../db'); // Your database connection
+const { DataTypes } = require("sequelize");
+const sequelize = require("../db"); // Your database connection
 
-const Sale = sequelize.define('Sale', {
+const Sale = sequelize.define("Sale", {
   invoiceNumber: {
     type: DataTypes.STRING,
+    primaryKey: true, // Use an existing column as the primary key
     allowNull: false,
-    unique: true
+    unique: true,
   },
   itemsCount: {
-    type: DataTypes.INTEGER
+    type: DataTypes.INTEGER,
   },
   totalCost: {
     type: DataTypes.DECIMAL(10, 2),
-    allowNull: false
+    allowNull: false,
   },
   paymentReceipt: {
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
+    allowNull: true,
   },
   timestamp: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
+    defaultValue: DataTypes.NOW,
   },
   user: {
-    type: DataTypes.STRING
-  }
+    type: DataTypes.STRING,
+  },
 });
 
 module.exports = Sale;
