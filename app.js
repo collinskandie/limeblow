@@ -28,12 +28,13 @@ app.use((req, res, next) => {
   next(); // Pass control to the next middleware
 });
 
+app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(expressLayouts);
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 
 // Mount your API routes
 app.use("/api", apiRouter);
@@ -265,8 +266,6 @@ app.get("/item-details/:productId", async (req, res) => {
     if (!product) {
       return res.status(404).json({ error: "Product not found" });
     }
-
-    // Render your item details page with the product data
     res.render("item-details", {
       title: "Item Details",
       layout: "layouts/master",

@@ -8,8 +8,6 @@ async function newMpesa(req, res) {
     const amount = Math.ceil(cost_items);
     const items = req.body.cartItems;
 
-    // make mpesa payemnts
-
     const date = new Date();
     const timestamp =
       date.getFullYear() +
@@ -38,7 +36,8 @@ async function newMpesa(req, res) {
           PartyA: `254${mpesa_no}`,
           PartyB: shortcode,
           PhoneNumber: `254${mpesa_no}`,
-          CallBackURL: process.env.URL,
+          CallBackURL:
+            "https://ed54-2c0f-fe38-2188-f3db-f80f-8b7a-fe01-c593.ngrok-free.app/api/payments/callback",
           AccountReference: `254${mpesa_no}`,
           TransactionDesc: "Test",
         },
@@ -58,6 +57,37 @@ async function newMpesa(req, res) {
     res.status(500).json(error.data);
   }
 }
+function mpesaCallBack(req, res) {
+  const callbackdata = req.body;
+  if (!callbackdata.Body.CallbackMetadata) {
+    console.log(callbackdata.Body);
+    res.json("ok");
+  }
+
+  console.log(callbackdata.Body.stkCallback.CallbackMetadata);
+
+  const amount = callbackdata.Body.stkCallback.CallbackMetadata.Item[0].Value;
+  const trans_id = callbackdata.Body.stkCallback.CallbackMetadata.Item[1].Value;
+  const trans_date =
+    callbackdata.Body.stkCallback.CallbackMetadata.Item[3].Value;
+  const phone =
+    callbackdata.callbackdata.Body.stkCallback.CallbackMetadata.Item[4].Value;
+  console.log({ phone, amount, trans_id, trans_date });
+
+  const payment = new Payments();
+  payment.referenceNumber = trans_id;
+  payment.invoiceTotal = amount;
+  payment.accountNumber = phone;
+
+  payment
+    .save()
+    .then((data) => {
+      console.log(data);
+    })
+    .catch((error) => {
+      console.log(error);
+    });
+}
 async function newCard(req, res) {
   try {
     console.log(req.body);
@@ -67,7 +97,9 @@ async function newCard(req, res) {
     res.status(500).json({ error: "Error addding customer" });
   }
 }
+
 module.exports = {
   newMpesa,
   newCard,
+  mpesaCallBack,
 };

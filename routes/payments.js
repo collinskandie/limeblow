@@ -4,7 +4,5 @@ const paymentsController = require("../controllers/paymentsController");
 const { generateToken } = require("../middleware/authenticateToken");
 router.post("/mpesa", generateToken, paymentsController.newMpesa);
 router.post("/card", paymentsController.newCard);
-
-// router.post("/newaddress", usersController.addAddress);
-
+router.post("/callback", paymentsController.mpesaCallBack);
 module.exports = router; // Export the router object

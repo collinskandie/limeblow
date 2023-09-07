@@ -2,30 +2,34 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../db'); // Your database connection
 
-const Payment = sequelize.define('Payment', {
+const Payments = sequelize.define('Payment', {
   recordId: {
     type: DataTypes.INTEGER,
     primaryKey: true,
-    autoIncrement: true
+    autoIncrement: true,
   },
   invoiceNumber: {
     type: DataTypes.STRING,
-    allowNull: false
+    allowNull: false,
   },
   paymentMethod: {
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
   },
   invoiceTotal: {
     type: DataTypes.DECIMAL(10, 2),
-    allowNull: false
+    allowNull: false,
   },
   referenceNumber: {
-    type: DataTypes.STRING
+    type: DataTypes.STRING,
+  },
+  accountNumber: {
+    type: DataTypes.STRING,
+    allowNull: false, // You can change this based on your requirements
   },
   timestamp: {
     type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
-  }
+    defaultValue: DataTypes.NOW,
+  },
 });
 
-module.exports = Payment;
+module.exports = Payments;
