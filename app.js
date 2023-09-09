@@ -1,7 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const expressLayouts = require("express-ejs-layouts");
-const session = require('express-session');
+const session = require("express-session");
 
 const sequelize = require("./db");
 const Category = require("./models/Category");
@@ -9,7 +9,7 @@ require("dotenv").config();
 const app = express();
 
 const apiRouter = require("./routes/index");
-const usersController = require('./controllers/usersController');
+const usersController = require("./controllers/usersController");
 const Product = require("./models/Product");
 
 const port = process.env.PORT || 3000;
@@ -38,7 +38,9 @@ app.use(expressLayouts);
 
 // Mount your API routes
 app.use("/api", apiRouter);
-app.post('/login', usersController.login);
+app.post("/login", usersController.login);
+const runMigration = require("./controllers/migrate");
+app.get("/run-migrations", runMigration.runMigrations);
 
 // Define your other routes here
 
@@ -77,7 +79,6 @@ app.get("/index", async (req, res) => {
       order: [["createdAt", "DESC"]],
       limit: 3,
     });
-
     res.render("index", {
       title: "Home",
       layout: "layouts/master",
@@ -149,13 +150,13 @@ app.get("/checkout", async (req, res) => {
 });
 app.get("/payments", async (req, res) => {
   try {
-    const categories = await Category.findAll();   
-    const userSessionExists = req.session && req.session.user; 
+    const categories = await Category.findAll();
+    const userSessionExists = req.session && req.session.user;
     res.render("payments", {
       title: "Payments",
       layout: "layouts/master",
       categories,
-      userSessionExists, 
+      userSessionExists,
     });
   } catch (error) {
     console.error(error);
@@ -251,9 +252,11 @@ app.get("/login", (req, res) => {
 });
 app.get("/signup", (req, res) => {
   const userSessionExists = req.session && req.session.user; // Modify this based on your session management logic
-  res.render("signup", { title: "Sign Up", layout: "layouts/master",
-  userSessionExists, // Pass the session status to the view
- });
+  res.render("signup", {
+    title: "Sign Up",
+    layout: "layouts/master",
+    userSessionExists, // Pass the session status to the view
+  });
 });
 
 //page redirects

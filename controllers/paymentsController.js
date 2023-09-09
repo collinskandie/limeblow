@@ -46,7 +46,7 @@ async function newMpesa(req, res) {
         PartyB: shortcode,
         PhoneNumber: `254${mpesa_no}`,
         CallBackURL:
-          "https://ed54-2c0f-fe38-2188-f3db-f80f-8b7a-fe01-c593.ngrok-free.app/api/payments/callback",
+          "https://c960-2c0f-fe38-224b-af0-c1b6-2692-602d-b75c.ngrok-free.app/api/payments/callback",
         AccountReference: `254${mpesa_no}`,
         TransactionDesc: "Test",
       },
