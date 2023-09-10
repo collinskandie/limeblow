@@ -11,6 +11,7 @@ const app = express();
 const apiRouter = require("./routes/index");
 const usersController = require("./controllers/usersController");
 const Product = require("./models/Product");
+const { Op } = require("sequelize");
 
 const port = process.env.PORT || 3000;
 app.use(
@@ -264,16 +265,26 @@ app.get("/item-details/:productId", async (req, res) => {
   try {
     const productId = req.params.productId;
     const product = await Product.findByPk(productId); // Find product by ID
-    const categories = await Category.findAll();
 
     if (!product) {
       return res.status(404).json({ error: "Product not found" });
     }
+
+    // Find related products based on category ID
+    const relatedProducts = await Product.findAll({
+      where: {
+        category: product.category, // Assuming you have a 'categoryId' field in your Product model
+        // id: { [Op.ne]: productid }, // Exclude the current product
+      },
+    });
+
+    const categories = await Category.findAll();
     res.render("item-details", {
       title: "Item Details",
       layout: "layouts/master",
       categories,
       product,
+      relatedProducts,
     });
   } catch (error) {
     console.error(error);

@@ -37,19 +37,18 @@
                 href="https://api.whatsapp.com/send?phone=254113811925"
                 target="_blank"
               >
-                <img
+                <!-- <img
                   src="img/whats_app.jpeg"
                   alt="WhatsApp Logo"
                   width="30"
                   height="30"
-                />
+                /> -->
                 <h5>+254113 811925</h5>
-                <span>support 24/7 time</span>
                 <span>Contact Us on WhatsApp</span>
               </a>
             </div>
           </div>
-          <div class="hero__item set-bg" data-setbg="img/hero/banner.jpg">
+          <div class="hero__item">
             <div class="hero__text">
               <span>Amazing Gifts</span>
               <h2>Gifts <br />100% handmade</h2>
@@ -71,7 +70,7 @@
           <div class="col-lg-3">
             <div
               class="categories__item set-bg"
-              data-setbg="img/uploads/<%= Array.isArray(category.imageUrl) ? category.imageUrl[0] : category.imageUrl %>"
+              data-setbg="/img/uploads/<%= Array.isArray(category.imageUrl) ? category.imageUrl[0] : category.imageUrl %>"
             >
               <h5>
                 <a href="/department/<%= category.id %>"
@@ -115,9 +114,7 @@
                 <li>
                   <a><i class="fa fa-heart"></i></a>
                 </li>
-                <li>
-                  <!-- <a ><i class="fa fa-retweet"></i></a> -->
-                </li>
+                <li></li>
                 <li>
                   <a
                     onclick="addToCart('<%= product.productid %>', '<%= product.name %>')"
@@ -148,18 +145,41 @@
     <div class="container">
       <div class="row">
         <div class="col-lg-6 col-md-6 col-sm-6">
-          <div class="banner__pic">
-            <img src="img/banner/banner-1.jpg" alt="" />
+          <div class="banner__video">
+            <video
+              autoplay
+              loop
+              muted
+              playsinline
+              poster="/img/banner/banner-1.jpg"
+              width="100%"
+              height="300px"
+            >
+              <source src="/img/MP44/img_2708.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
           </div>
         </div>
         <div class="col-lg-6 col-md-6 col-sm-6">
-          <div class="banner__pic">
-            <img src="img/banner/banner-2.jpg" alt="" />
+          <div class="banner__video">
+            <video
+              autoplay
+              loop
+              muted
+              playsinline
+              poster="/img/banner/banner-2.jpg"
+              width="100%"
+              height="300px"
+            >
+              <source src="/img/MP44/img_2714.mp4" type="video/mp4" />
+              Your browser does not support the video tag.
+            </video>
           </div>
         </div>
       </div>
     </div>
   </div>
+
   <!-- Banner End -->
 
   <!-- Latest Product Section Begin -->

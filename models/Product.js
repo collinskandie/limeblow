@@ -50,6 +50,12 @@ const Product = sequelize.define("Product", {
     type: DataTypes.BOOLEAN,
     defaultValue: true,
   },
+  category: {
+    type: DataTypes.STRING, // You can adjust the data type as needed
+  },
+  subCategory: {
+    type: DataTypes.STRING, // You can adjust the data type as needed
+  },
   timestamp: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
