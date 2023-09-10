@@ -1,58 +1,121 @@
+<style>
+  .suggestions-container {
+    position: absolute;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(71, 219, 78, 0.1);
+    max-height: 200px;
+    width: 100%;
+    overflow-y: auto;
+    z-index: 1000;
+  }
+  .suggestion-item {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  .suggestion-item:hover {
+    background-color: #0a8306;
+  }
+</style>
 <section class="hero hero-normal">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-3">
-          <div class="hero__categories">
-            <div class="hero__categories__all">
-              <i class="fa fa-bars"></i>
-              <span>All categories</span>
-            </div>
-            <ul>
-              <% categories.forEach(category => { %>
-              <li><a href="/department"><%= category.name %></a></li>
-              <% }); %>
-            </ul>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3">
+        <div class="hero__categories">
+          <div class="hero__categories__all">
+            <i class="fa fa-bars"></i>
+            <span>All categories</span>
+          </div>
+          <ul>
+            <% categories.forEach(category => { %>
+            <li>
+              <a href="/department/<%= category.id %>"><%= category.name %></a>
+            </li>
+            <% }); %>
+          </ul>
+        </div>
+      </div>
+      <div class="col-lg-9">
+        <div class="hero__search">
+          <div class="hero__search__form">
+            <form action="#">
+              <div class="hero__search__categories">
+                All Categories
+                <span class="arrow_carrot-down"></span>
+              </div>
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="What do you need?"
+              />
+              <button type="submit" class="site-btn">SEARCH</button>
+            </form>
+          </div>
+          <div class="hero__search__phone__text">
+            <h5>+254113 811925</h5>
+            <span>support 24/7 time</span>
           </div>
         </div>
-        <div class="col-lg-9">
-          <div class="hero__search">
-            <div class="hero__search__form">
-              <form action="#">
-                <div class="hero__search__categories">
-                  All Categories
-                  <span class="arrow_carrot-down"></span>
-                </div>
-                <input type="text" placeholder="What do yo u need?" />
-                <button type="submit" class="site-btn">SEARCH</button>
-              </form>
-            </div>
-            <div class="hero__search__phone">
-              <div class="hero__search__phone__icon">
-                <i class="fa fa-phone"></i>
-              </div>
-              <div class="hero__search__phone__text">
-                <h5>+254113 811925</h5>
-                <span>support 24/7 time</span>
-              </div>
-            </div>
+        <div id="suggestionsContainer" class="suggestions-container">
+          <!-- Suggestions will be dynamically added here -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="breadcrumb-section set-bg" data-setbg="/img/breadcrumb.jpg">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 text-center">
+        <div class="breadcrumb__text">
+          <h2><%= title %></h2>
+          <div class="breadcrumb__option">
+            <a href="/index">Home</a>
+            <span><%= title %> </span>
           </div>
         </div>
       </div>
     </div>
-  </section>
-  
-  <section class="breadcrumb-section set-bg" data-setbg="/img/breadcrumb.jpg">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-12 text-center">
-          <div class="breadcrumb__text">
-            <h2>Contact Us</h2>
-            <div class="breadcrumb__option">
-              <a href="index">Home</a>
-              <span>Contact Us</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+  </div>
+</section>
+
+<script>
+  const searchInput = document.getElementById("searchInput");
+  const suggestionsContainer = document.getElementById("suggestionsContainer");
+  let allProducts = [];
+  fetch("/api/products")
+    .then((response) => response.json())
+    .then((data) => {
+      allProducts = data;
+    })
+    .catch((error) => {
+      console.error("Error fetching all products:", error);
+    });
+  searchInput.addEventListener("input", () => {
+    const userInput = searchInput.value.toLowerCase();
+    const filteredSuggestions = allProducts.filter((product) =>
+      product.name.toLowerCase().includes(userInput)
+    );
+    displaySuggestions(filteredSuggestions);
+  });
+  function displaySuggestions(suggestions) {
+    suggestionsContainer.innerHTML = "";
+    if (suggestions.length === 0) {
+      const noResultsMessage = document.createElement("div");
+      noResultsMessage.textContent = "No matching products found.";
+      suggestionsContainer.appendChild(noResultsMessage);
+    } else {
+      suggestions.forEach((product) => {
+        const suggestionItem = document.createElement("div");
+        suggestionItem.classList.add("suggestion-item");
+        suggestionItem.textContent = product.name;
+        let product_id = product.productid;
+
+        suggestionItem.addEventListener("click", () => {
+          window.location.href = `/item-details/${product_id}`;
+        });
+        suggestionsContainer.appendChild(suggestionItem);
+      });
+    }
+  }
+</script>

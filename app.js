@@ -260,16 +260,43 @@ app.get("/signup", (req, res) => {
   });
 });
 
+// departments/categories redirect page
+app.get("/department/:categoryid", async (req, res) => {
+  try {
+    const categoryid = req.params.categoryid;
+    const category = await Category.findByPk(categoryid);
+
+    if (!category) {
+      return res.status(404).json({ error: "Category not found" });
+    }
+    const products_Category = await Product.findAll({
+      where: {
+        category: category.id, // Assuming you have a 'categoryId' field in your Product model
+        // id: { [Op.ne]: productid }, // Exclude the current product
+      },
+    });
+    const categories = await Category.findAll();
+    res.render("category-details", {
+      title: "Category Details",
+      layout: "layouts/master",
+      category,
+      categories,
+      products_Category,
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(404).json({ err: error });
+  }
+});
+
 //page redirects
 app.get("/item-details/:productId", async (req, res) => {
   try {
     const productId = req.params.productId;
     const product = await Product.findByPk(productId); // Find product by ID
-
     if (!product) {
       return res.status(404).json({ error: "Product not found" });
     }
-
     // Find related products based on category ID
     const relatedProducts = await Product.findAll({
       where: {
@@ -277,7 +304,6 @@ app.get("/item-details/:productId", async (req, res) => {
         // id: { [Op.ne]: productid }, // Exclude the current product
       },
     });
-
     const categories = await Category.findAll();
     res.render("item-details", {
       title: "Item Details",
@@ -290,6 +316,16 @@ app.get("/item-details/:productId", async (req, res) => {
     console.error(error);
     res.status(500).json({ error: "Error fetching product details" });
   }
+});
+app.get("/search", async (req, res) => {
+  const userInput = req.query.query; // Get the user's input from the query parameter
+
+  const products = await Product.findAll();
+  const suggestions = products.filter((product) =>
+    product.name.toLowerCase().includes(userInput.toLowerCase())
+  );
+
+  res.json(suggestions);
 });
 
 // Start the server
