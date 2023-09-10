@@ -1,7 +1,11 @@
 const Customer = require("../models/Customer");
 const crypto = require("crypto");
 const BillingDetails = require("../models/BillingDetails");
-const { sendMail } = require("../mailer/sendmail");
+const Contacts = require("../models/Contactform");
+const {
+  sendActivationMail,
+  sendNewMessageMail,
+} = require("../mailer/sendmail");
 const jwt = require("jsonwebtoken");
 
 async function AddUsers(req, res) {
@@ -25,9 +29,9 @@ async function AddUsers(req, res) {
       phone: phone,
       confirmationCode: confirmationCode,
       password: password,
-    });    
+    });
     console.log(password);
-    const userId = newCustomer.id; 
+    const userId = newCustomer.id;
     const custom_address = billingAdress(
       first_name,
       last_name,
@@ -39,8 +43,8 @@ async function AddUsers(req, res) {
       phone,
       email,
       userId
-    );    
-    sendMail(email, confirmationCode);    
+    );
+    sendActivationMail(email, confirmationCode);
     return res.status(201).json({
       success: true,
       message: "Account created successfully",
@@ -54,7 +58,7 @@ async function AddUsers(req, res) {
   }
 }
 async function login(req, res) {
-  try {    
+  try {
     const { email, password } = req.body;
     const customer = await Customer.findOne({ where: { email } });
     if (!customer) {
@@ -172,8 +176,23 @@ function generateRandomCode(length) {
   }
   return code;
 }
+async function newMessage(name, email, message) {
+  try {
+    const post_message = await Contacts.Create(name, email, message);
+    if (!post_message) {
+      return (error = "Failed to save message");
+    }
+    sendNewMessageMail(name, email, message);
+    const success = {
+      success: true,
+      message: "Message saved and sent",
+    };
+    return success;
+  } catch (error) {}
+}
 module.exports = {
   AddUsers,
   login,
   addAddress,
+  newMessage,
 };

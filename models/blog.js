@@ -1,6 +1,5 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("../db"); // Import your Sequelize instance
-
+const sequelize = require("../db"); 
 const Blog = sequelize.define("Blog", {
   title: {
     type: DataTypes.STRING,

@@ -41,6 +41,7 @@ app.use(expressLayouts);
 app.use("/api", apiRouter);
 app.post("/login", usersController.login);
 const runMigration = require("./controllers/migrate");
+const Blog = require("./models/blog");
 app.get("/run-migrations", runMigration.runMigrations);
 
 // Define your other routes here
@@ -115,10 +116,36 @@ app.get("/contact", async (req, res) => {
     });
   }
 });
+app.post("/contact", async (req, res) => {
+  try {
+    const { name, email, message } = req.body;
+    const saveMessage = await usersController.newMessage(name, email, message);
+    const categories = await Category.findAll();
+    res.render("contact", {
+      title: "Contact Us",
+      layout: "layouts/master",
+      categories,
+      saveMessage,
+    });
+  } catch (error) {
+    console.error(error);
+    res.render("contact", {
+      title: "Contact Us",
+      layout: "layouts/master",
+      categories: [],
+    });
+  }
+});
 app.get("/blog", async (req, res) => {
   try {
     const categories = await Category.findAll();
-    res.render("blog", { title: "Blog", layout: "layouts/master", categories });
+    const blogs = await Blog.findAll();
+    res.render("blog", {
+      title: "Blog",
+      layout: "layouts/master",
+      categories,
+      blogs,
+    });
   } catch (error) {
     console.error(error);
     res.render("blog", {
@@ -187,13 +214,24 @@ app.get("/shop-details", async (req, res) => {
   }
 });
 
-app.get("/blog-details", async (req, res) => {
+app.get("/blog-details/:blogId", async (req, res) => {
   try {
+    const blogid = req.params.blogId;
+    const blogDetails = await Blog.findByPk(blogid);
+    const recentBlogs = await Blog.findAll({
+      order: [["createdAt", "DESC"]],
+      limit: 3,
+    });
+    const blogs = await Blog.findAll();
+
     const categories = await Category.findAll();
     res.render("blog-details", {
       title: "Blog Details",
       layout: "layouts/master",
       categories,
+      blogDetails,
+      blogs,
+      recentBlogs,
     });
   } catch (error) {
     console.error(error);
