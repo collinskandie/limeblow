@@ -178,17 +178,22 @@ function generateRandomCode(length) {
 }
 async function newMessage(name, email, message) {
   try {
-    const post_message = await Contacts.Create(name, email, message);
-    if (!post_message) {
-      return (error = "Failed to save message");
+    const postMessage = await Contacts.create({
+      name: name,
+      email: email,
+      message: message,
+    });
+   
+    if (!postMessage) {
+      console.log("Failed");
+      throw new Error("Failed to save message"); // Throw an error if the message couldn't be saved
     }
     sendNewMessageMail(name, email, message);
-    const success = {
-      success: true,
-      message: "Message saved and sent",
-    };
-    return success;
-  } catch (error) {}
+    return postMessage;
+  } catch (error) {
+    console.error(error);
+    throw error; // Re-throw the error to be caught in the route handler
+  }
 }
 module.exports = {
   AddUsers,

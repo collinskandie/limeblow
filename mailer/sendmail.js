@@ -21,6 +21,9 @@ transporter = nodemailer.createTransport({
     user: process.env.service_mail,
     pass: process.env.service_password,
   },
+  // tls: {
+  //   rejectUnauthorized: false, // Bypass certificate validation (not recommended for production)
+  // },
 });
 
 const sendActivationMail = function (email, name, confirmationCode) {
@@ -64,7 +67,7 @@ const sendNewMessageMail = function (name, email, message) {
     var template = Handlebars.compile(html);
     var replacements = {
       taskOnwer: name,
-      link: confirmationCode,
+      // link: confirmationCode,
       img: img,
     };
     var htmlToSend = template(replacements);
@@ -72,7 +75,7 @@ const sendNewMessageMail = function (name, email, message) {
       from: process.env.service_mail,
       to: email,
       subject: message,
-      html: htmlToSend,      
+      html: htmlToSend,
       text: "",
     };
     transporter.sendMail(mailOptions, (error, info) => {

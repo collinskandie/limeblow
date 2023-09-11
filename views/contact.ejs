@@ -2,7 +2,7 @@
   <!-- Page Preloder -->
   <!-- Hero Section Begin -->
   <%- include('hero.ejs') %>
- 
+
   <section class="contact spad">
     <div class="container">
       <div class="row">
@@ -50,7 +50,7 @@
       aria-hidden="false"
       loading="lazy"
       referrerpolicy="no-referrer-when-downgrade"
-    ></iframe>   
+    ></iframe>
     <div class="map-inside">
       <i class="icon_pin"></i>
       <div class="inside-widget">
@@ -74,23 +74,48 @@
           </div>
         </div>
       </div>
-      <form action="#">
+      <form id="contactForm">
         <div class="row">
           <div class="col-lg-6 col-md-6">
-            <input type="text" placeholder="Your name" />
+            <input type="text" placeholder="Your name" name="name" />
           </div>
           <div class="col-lg-6 col-md-6">
-            <input type="text" placeholder="Your Email" />
+            <input type="text" placeholder="Your Email" name="email" />
           </div>
           <div class="col-lg-12 text-center">
-            <textarea placeholder="Your message"></textarea>
-            <button type="submit" class="site-btn">SEND MESSAGE</button>
+            <textarea placeholder="Your message" name="message"></textarea>
+            <button type="button" onclick="submitForm()" class="site-btn">
+              SEND MESSAGE
+            </button>
           </div>
         </div>
       </form>
     </div>
   </div>
-  <!-- Contact Form End -->
+  <script>
+    function submitForm() {
+      const form = document.getElementById("contactForm");
+      const formData = new FormData(form);
 
-  <!-- Blog Section End -->
+      fetch("/contact", { 
+        method: "POST",
+        body: formData,
+      })
+        .then((response) => response.json()) // Assuming the server returns JSON
+        .then((data) => {
+          if (data.success) {
+            // Server response indicates success
+            alert(data.sucsess); // Display a success message
+            form.reset(); // Clear the form
+          } else {
+            // Server response indicates an error
+            alert(data.sucsess); // Display an error message
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          alert("An error occurred while submitting the form.", error);
+        });
+    }
+  </script>
 </body>

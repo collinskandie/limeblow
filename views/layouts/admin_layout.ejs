@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="description" content="Ogani Template" />
+    <meta name="keywords" content="Ogani, unica, creative, html" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title><%= title %> - Limeblow - handmade gift</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="/img/logo.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/img/logo.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/img/logo.png" />
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css" />
+    <link rel="stylesheet" href="/css/elegant-icons.css" type="text/css" />
+    <link rel="stylesheet" href="/css/font-awesome.min.css" type="text/css" />
+    <link rel="stylesheet" href="/css/jquery-ui.min.css" type="text/css" />
+    <link rel="stylesheet" href="/css/nice-select.css" type="text/css" />
+    <link rel="stylesheet" href="/css/owl.carousel.min.css" type="text/css" />
+    <link rel="stylesheet" href="/css/slicknav.min.css" type="text/css" />
+    <link rel="stylesheet" href="/css/style.css" type="text/css" /> 
+  </head>
+  <body>
+    <script>
+      const title = "<%= title %>"; // Get the title from your EJS template
+      const userToken = loadFromLocalStorage("userToken");
+      const userRole = loadFromLocalStorage("userRole");
+
+      if (userToken && userRole === "admin") {
+        // User is logged in as admin, show content
+        const mainContent = document.querySelector("main");
+        mainContent.style.display = "block"; // Show the main content
+      } else if (title !== "Login") {
+        // User is not logged in as admin and not on the "Login" page, redirect to login
+        window.location.href = "/admin/admin_login";
+      }
+    </script>
+
+    <!-- Main content (hidden by default) -->
+    <main style="display: none"><%- body %></main>
+
+    <!-- Your JavaScript includes and other content go here -->
+  </body>
+</html>

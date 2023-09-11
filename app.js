@@ -9,6 +9,7 @@ require("dotenv").config();
 const app = express();
 
 const apiRouter = require("./routes/index");
+const useAdmin = require("./routes/admin");
 const usersController = require("./controllers/usersController");
 const Product = require("./models/Product");
 const { Op } = require("sequelize");
@@ -39,6 +40,8 @@ app.use(expressLayouts);
 
 // Mount your API routes
 app.use("/api", apiRouter);
+//admin routes
+app.use("/admin", useAdmin);
 app.post("/login", usersController.login);
 const runMigration = require("./controllers/migrate");
 const Blog = require("./models/blog");
@@ -119,13 +122,16 @@ app.get("/contact", async (req, res) => {
 app.post("/contact", async (req, res) => {
   try {
     const { name, email, message } = req.body;
+    console.log(email);
     const saveMessage = await usersController.newMessage(name, email, message);
+    console.log(saveMessage);
     const categories = await Category.findAll();
     res.render("contact", {
       title: "Contact Us",
       layout: "layouts/master",
       categories,
       saveMessage,
+      sucsess: "Message saved",
     });
   } catch (error) {
     console.error(error);
@@ -133,9 +139,11 @@ app.post("/contact", async (req, res) => {
       title: "Contact Us",
       layout: "layouts/master",
       categories: [],
+      success: "Failed to save message", // Add an error message to display to the user
     });
   }
 });
+
 app.get("/blog", async (req, res) => {
   try {
     const categories = await Category.findAll();
