@@ -52,22 +52,20 @@
           formDataObject[key] = value;
         });
 
-        // Send a POST request to your API with JSON data
-        fetch("http://localhost:3000/api/users/login", {
+        fetch("/api/users/login", {
           method: "POST",
           headers: {
-            "Content-Type": "application/json", // Set the content type to JSON
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify(formDataObject), // Convert the form data object to JSON
+          body: JSON.stringify(formDataObject),
         })
           .then((response) => response.json())
           .then((data) => {
             console.log(data);
             if (data.success) {
-              // Save the token and customerId to localStorage or sessionStorage
               localStorage.setItem("token", data.token);
               localStorage.setItem("customerId", data.customerId);
-              // Handle the response
+
               alert(data.message);
               window.location.href = "/";
             } else {
@@ -76,7 +74,6 @@
           })
           .catch((error) => {
             console.error("Error:", error);
-            // Handle any errors here
           });
       });
   </script>

@@ -1,0 +1,265 @@
+<div
+  class="page-wrapper"
+  id="main-wrapper"
+  data-layout="vertical"
+  data-navbarbg="skin6"
+  data-sidebartype="full"
+  data-sidebar-position="fixed"
+  data-header-position="fixed"
+>
+  <!-- Sidebar Start -->
+  <%- include('sidenav.ejs') %>
+  <!--  Sidebar End -->
+  <!--  Main wrapper -->
+  <div class="body-wrapper">
+    <!--  Header Start -->
+    <header class="app-header"><%- include('nav.ejs') %></header>
+    <!--  Header End -->
+    <div class="container-fluid">
+      <button class="btn btn-primary">Add new</button>
+      <br />
+      <br />
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Image</th>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Created by</th>
+            <th scope="col">Create At</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% categories.forEach(category => { %>
+          <tr>
+            <th scope="row"><%= category.id %></th>
+            <td>
+              <img
+                src="/img/uploads/<%= category.imageUrl %>"
+                alt="Category Image"
+                width="50"
+                height="50"
+              />
+            </td>
+
+            <td><%= category.name %></td>
+            <td><%= category.description %></td>
+            <td><%= category.createdBy %></td>
+            <td><%= category.createdAt %></td>
+            <!-- Add these buttons to the "Action" column in your table -->
+            <!-- Add these buttons to the "Action" column in your table -->
+            <td>
+              <button
+                class="btn btn-primary"
+                onclick="openModal('<%= category.id %>', '<%= category.name %>','<%= category.description %>')"
+              >
+                Edit
+              </button>
+
+              <br />
+              <br />
+              <button
+                class="btn btn-danger"
+                onclick="deleteCategory('<%= category.id %>')"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+      <%- include('footer.ejs') %>
+    </div>
+  </div>
+</div>
+<!-- modal-title -->
+<div class="modal" id="editModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Category</h5>
+        <span class="close" onclick="closeModal()">&times;</span>
+      </div>
+      <div class="container">
+        <form id="editForm">
+          <div class="mb-3">
+            <label class="form-label" for="editName">Name:</label>
+            <input
+              type="text"
+              class="form-control"
+              aria-describedby="nameHelp"
+              id="catId"
+              name="catId"
+              hidden
+            />
+            <input
+              type="text"
+              class="form-control"
+              aria-describedby="nameHelp"
+              id="editName"
+              name="editName"
+            />
+            <div id="nameHelp" class="form-text">New category name</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="editDescription">Description</label>
+            <input
+              type="text"
+              class="form-control"
+              aria-describedby="descHelp"
+              id="editDescription"
+              name="editDescription"
+            />
+            <div id="descHelp" class="form-text">Category Description</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="editImage"
+              >Upload new picture:</label
+            >
+            <input
+              type="file"
+              class="form-control"
+              id="editImage"
+              name="editImage"
+              accept="image/*"
+            />
+            <div id="imageHelp" class="form-text">New category name</div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="saveCategory()"
+            >
+              Save changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // JavaScript function to handle category deletion
+  function deleteCategory(categoryId) {
+    // You can use JavaScript to make an AJAX request to the server to delete the category.
+    // For example, using the Fetch API:
+    fetch(`/api/deleteCategory/${categoryId}`, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        return response.json(); // Parse the JSON response from the server
+      })
+      .then((data) => {
+        if (data.message) {
+          // Category deleted successfully, you can update the UI as needed
+          // For example, remove the row from the table
+          alert(data.message);
+          const row = document.querySelector(
+            `tr[data-category-id="${categoryId}"]`
+          );
+          if (row) {
+            row.remove();
+          }
+          // Reload the page to update the table
+          window.location.reload();
+        } else {
+          // Handle error case
+          console.error("Category deletion failed");
+          alert("Category deletion failed"); // Display an error message
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred while deleting the category");
+      });
+  }
+
+  // Function to open the modal for editing
+  function openModal(categoryId, categoryName, categoryDescription) {
+    const editNameInput = document.getElementById("editName");
+    const editDescription = document.getElementById("editDescription");
+    const catId = document.getElementById("catId");
+    // Populate the input fields with the current category data
+    editNameInput.value = categoryName;
+    editDescription.value = categoryDescription;
+    catId.value = categoryId;
+
+    // Show the modal
+    const modal = document.getElementById("editModal");
+    modal.style.display = "block";
+  }
+
+  // Function to close the modal
+  function closeModal() {
+    const modal = document.getElementById("editModal");
+    modal.style.display = "none";
+  }
+
+  // Function to save the edited category
+  function saveCategory() {
+    console.log("saveCategory function is called");
+
+    const editNameInput = document.getElementById("editName");
+    const editDescriptionInput = document.getElementById("editDescription");
+    const editImageInput = document.getElementById("editImage");
+    const categoryId = document.getElementById("catId").value;
+
+    const editedName = editNameInput.value;
+    const editedDescription = editDescriptionInput.value;
+
+    console.log("categoryId:", categoryId);
+    console.log("editedName:", editedName);
+    console.log("editedDescription:", editedDescription);
+    const imageFile = editImageInput.files[0];
+
+    // Create a FormData object to handle file uploads
+    //<!-- const formData = new FormData();
+    //formData.append("categoryId", categoryId);
+    //formData.append("name", editedName);
+    //formData.append("description", editedDescription); -->
+    let formData = {
+      categoryId: categoryId,
+      editedName: editedName,
+      description: editedDescription,
+      image: imageFile,
+    };
+
+    //<!-- // Add the selected image file to the FormData
+
+    //if (imageFile) {
+    //console.log("imageFile:", imageFile);
+    // formData.append("image", imageFile);
+    //} -->
+
+    // Define the API endpoint URL
+    const apiUrl = "/api/updateCategory";
+    console.log(formData);
+
+    // Make a POST request to send the data to the server
+    fetch(apiUrl, {
+      method: "POST", // Use POST method to send data
+      data: formData, // Use FormData to send the data including the file
+    })
+      .then((response) => {
+        if (response.ok) {
+          // Category updated successfully, you can update the UI as needed
+          closeModal();
+          alert("Category updated successfully");
+          // Reload the table or update the UI as needed
+        } else {
+          // Handle error case
+          console.error("Category update failed");
+          alert("Category update failed"); // Display an error message
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred while updating the category");
+      });
+  }
+</script>

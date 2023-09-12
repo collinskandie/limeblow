@@ -36,7 +36,7 @@
       <span class="arrow_carrot-down"></span>
       <ul>
         <!-- <li><a >Spanis</a></li> -->
-        <li><a >English</a></li>
+        <li><a>English</a></li>
       </ul>
     </div>
     <div class="header__top__right__auth">
@@ -47,28 +47,26 @@
   <nav class="humberger__menu__nav mobile-menu">
     <ul>
       <li class="<%= title === 'Home' ? 'active' : '' %>">
-        <a href="/">Home</a>
+        <a href="/index">Home</a>
       </li>
-      <li><a href="shop-grid">Shop</a></li>
-      <li class="<%= title === 'Home' ? 'active' : '' %>">
-        <a >Pages</a>
-        <ul class="header__menu__dropdown">
-          <li><a href="shop-details">Shop Details</a></li>
-          <li><a href="shoping-cart">Shoping Cart</a></li>
-          <li><a href="checkout">Check Out</a></li>
-          <li><a href="blog-details">Blog Details</a></li>
-        </ul>
+      <li class="<%= title === 'Shop' ? 'active' : '' %>">
+        <a href="/shop-grid">Shop</a>
       </li>
-      <li><a href="blog">Blog</a></li>
-      <li><a href="contact">Contact</a></li>
+
+      <li class="<%= title === 'Blog' ? 'active' : '' %>">
+        <a href="/blog">Blog</a>
+      </li>
+      <li class="<%= title === 'Contact Us' ? 'active' : '' %>">
+        <a href="/contact">Contact</a>
+      </li>
     </ul>
   </nav>
   <div id="mobile-menu-wrap"></div>
   <div class="header__top__right__social">
-    <a ><i class="fa fa-facebook"></i></a>
-    <a ><i class="fa fa-twitter"></i></a>
-    <a ><i class="fa fa-linkedin"></i></a>
-    <a ><i class="fa fa-pinterest-p"></i></a>
+    <a><i class="fa fa-facebook"></i></a>
+    <a><i class="fa fa-twitter"></i></a>
+    <a><i class="fa fa-linkedin"></i></a>
+    <a><i class="fa fa-pinterest-p"></i></a>
   </div>
   <div class="humberger__menu__contact">
     <ul>
@@ -95,21 +93,23 @@
         <div class="col-lg-6 col-md-6">
           <div class="header__top__right">
             <div class="header__top__right__social">
-              <a ><i class="fa fa-facebook"></i></a>
-              <a ><i class="fa fa-twitter"></i></a>
-              <a ><i class="fa fa-linkedin"></i></a>
-              <a ><i class="fa fa-pinterest-p"></i></a>
+              <a><i class="fa fa-facebook"></i></a>
+              <a><i class="fa fa-twitter"></i></a>
+              <a><i class="fa fa-linkedin"></i></a>
+              <a><i class="fa fa-pinterest-p"></i></a>
             </div>
             <div class="header__top__right__language">
               <img src="img/language.png" alt="" />
               <div>English</div>
               <span class="arrow_carrot-down"></span>
               <ul>
-                <li><a >English</a></li>
+                <li><a>English</a></li>
               </ul>
             </div>
             <div class="header__top__right__auth">
-              <a id="authLink" href="/login"><i class="fa fa-user"></i> Login</a>
+              <a id="authLink" href="/login"
+                ><i class="fa fa-user"></i> Login</a
+              >
               <button id="logoutButton" style="display: none">Logout</button>
             </div>
           </div>

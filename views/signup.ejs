@@ -34,19 +34,14 @@
 <script>
   $(document).ready(function () {
     $("form").submit(function (event) {
-      event.preventDefault(); // Prevent the default form submission
-      // Serialize the form data
-      var formData = $(this).serialize();
-
-      // Make an AJAX POST request to the API
+      event.preventDefault();       
+      var formData = $(this).serialize();      
       $.ajax({
         type: "POST",
-        url: "http://localhost:3000/api/users/signup",
+        url: "/api/users/signup",
         data: formData,
-        success: function (response) {
-          // Handle the success response here
-          console.log("Success:", response);
-          // Display a Bootstrap toast notification with a button
+        success: function (response) {         
+          console.log("Success:", response);          
           var toast = `<div class="toast" role="alert" aria-live="assertive" aria-atomic="true" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);">
                         <div class="toast-header">
                           <strong class="mr-auto">Success</strong>
@@ -60,23 +55,16 @@
                         <div class="toast-footer">
                           <button type="button" class="btn btn-primary btn-sm" id="okButton">OK</button>
                         </div>
-                      </div>`;
-
-          // Append the toast to the body and show it
+                      </div>`;         
           $("body").append(toast);
           var toastElement = $(".toast");
-          toastElement.toast({ autohide: false }).toast("show");
-
-          // Add a click event listener to the "OK" button
-          $("#okButton").click(function () {
-            // Redirect to the login page
-            window.location.href = "/login"; // Replace with your login page URL
+          toastElement.toast({ autohide: false }).toast("show");         
+          $("#okButton").click(function () {            
+            window.location.href = "/login"; 
           });
         },
-        error: function (error) {
-          // Handle the error response here
-          console.error("Error:", error);
-          // You can display an error message to the user if needed
+        error: function (error) {         
+          console.error("Error:", error);          
         },
       });
     });

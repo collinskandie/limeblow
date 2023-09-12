@@ -18,6 +18,11 @@ router.get("/generate-test-products", productsController.generateTestProducts);
 
 // categories
 router.get("/categories", categoriesController.getAllCategories);
+router.delete(
+  "/deleteCategory/:categoryId",
+  categoriesController.deleteCategory
+);
+router.post("/updateCategory",categoriesController.editCategory);
 router.post("/addcategories", categoriesController.AddCategories);
 //manage users
 router.use("/users", usersRouter);

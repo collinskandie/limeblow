@@ -23,7 +23,6 @@ app.use(
     cookie: { secure: false }, // Adjust settings as needed
   })
 );
-
 // Middleware to log requests
 app.use((req, res, next) => {
   console.log(`Received ${req.method} request for ${req.originalUrl}`);
@@ -376,5 +375,5 @@ app.get("/search", async (req, res) => {
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  console.log(`Server is running on ${port}`);
 });

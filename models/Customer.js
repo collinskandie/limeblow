@@ -1,7 +1,7 @@
 // models/Customer.js
 const { DataTypes } = require("sequelize");
 const sequelize = require("../db");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 const Customer = sequelize.define("Customer", {
   id: {

@@ -42,7 +42,7 @@ function addToCart(productId) {
 // Function to fetch product details from the API
 function fetchProductDetails(productId) {
   // Make an API request to get product details by productId
-  return fetch(`http://localhost:3000/api/productsbyId/${productId}`)
+  return fetch(`/api/productsbyId/${productId}`)
     .then((response) => {
       if (!response.ok) {
         throw new Error("Failed to fetch product details");

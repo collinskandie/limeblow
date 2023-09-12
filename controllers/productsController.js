@@ -78,7 +78,6 @@ async function addProduct(req, res) {
 async function generateTestProducts(req, res) {
   try {
     const numProducts = 22;
-
     // Generate test products
     const testProducts = [];
     for (let i = 1; i <= numProducts; i++) {

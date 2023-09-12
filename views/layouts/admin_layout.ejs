@@ -23,10 +23,16 @@
     <link rel="stylesheet" href="/css/nice-select.css" type="text/css" />
     <link rel="stylesheet" href="/css/owl.carousel.min.css" type="text/css" />
     <link rel="stylesheet" href="/css/slicknav.min.css" type="text/css" />
-    <link rel="stylesheet" href="/css/style.css" type="text/css" /> 
-  </head>
-  <body>
-    <script>
+    <link rel="stylesheet" href="/css/style.css" type="text/css" />
+
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="/assets/images/logos/favicon.png"
+    />
+    <link rel="stylesheet" href="/assets/css/styles.min.css" type="text/css" />
+    <body>
+      <!-- <script>
       const title = "<%= title %>"; // Get the title from your EJS template
       const userToken = loadFromLocalStorage("userToken");
       const userRole = loadFromLocalStorage("userRole");
@@ -39,11 +45,17 @@
         // User is not logged in as admin and not on the "Login" page, redirect to login
         window.location.href = "/admin/admin_login";
       }
-    </script>
+    </script> -->
 
-    <!-- Main content (hidden by default) -->
-    <main style="display: none"><%- body %></main>
+      <!-- Main content (hidden by default) -->
 
-    <!-- Your JavaScript includes and other content go here -->
-  </body>
+      <main><%- body %></main>
+
+      <script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+      <script src="/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+      <script src="/assets/js/sidebarmenu.js"></script>
+      <script src="/assets/js/app.min.js"></script>
+      <script src="/assets/libs/simplebar/dist/simplebar.js"></script>
+    </body>
+  </head>
 </html>
