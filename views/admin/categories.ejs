@@ -212,45 +212,48 @@
     const editedName = editNameInput.value;
     const editedDescription = editDescriptionInput.value;
 
-    console.log("categoryId:", categoryId);
-    console.log("editedName:", editedName);
-    console.log("editedDescription:", editedDescription);
-    const imageFile = editImageInput.files[0];
-
     // Create a FormData object to handle file uploads
-    //<!-- const formData = new FormData();
-    //formData.append("categoryId", categoryId);
-    //formData.append("name", editedName);
-    //formData.append("description", editedDescription); -->
-    let formData = {
-      categoryId: categoryId,
-      editedName: editedName,
-      description: editedDescription,
-      image: imageFile,
-    };
+    const formData = new FormData();
+    formData.append("categoryId", categoryId);
+    formData.append("name", editedName);
+    formData.append("description", editedDescription);
 
-    //<!-- // Add the selected image file to the FormData
+    // Add the selected image file to the FormData
+    const imageFile = editImageInput.files[0];
+    if (imageFile) {
+      formData.append("imageFile", imageFile);
+    }
 
-    //if (imageFile) {
-    //console.log("imageFile:", imageFile);
-    // formData.append("image", imageFile);
-    //} -->
+    // Convert the FormData to an object for JSON data
+    const requestData = {};
+    formData.forEach((value, key) => {
+      requestData[key] = value;
+    });
+    if (imageFile) {
+      const reader = new FileReader();
+      reader.readAsDataURL(imageFile);
+      reader.onloadend = () => {
+        requestData.image = reader.result; // Base64-encoded image
+        //sendJSONRequest(requestData);
+      };
+    }
 
-    // Define the API endpoint URL
     const apiUrl = "/api/updateCategory";
-    console.log(formData);
 
-    // Make a POST request to send the data to the server
+    // Make a POST request to send the JSON data with the image file
     fetch(apiUrl, {
-      method: "POST", // Use POST method to send data
-      data: formData, // Use FormData to send the data including the file
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", // Specify that you're sending JSON data
+      },
+      body: JSON.stringify(requestData), // Convert the requestData object to JSON
     })
       .then((response) => {
         if (response.ok) {
           // Category updated successfully, you can update the UI as needed
           closeModal();
           alert("Category updated successfully");
-          // Reload the table or update the UI as needed
+          window.location.reload();
         } else {
           // Handle error case
           console.error("Category update failed");
