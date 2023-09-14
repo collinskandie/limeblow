@@ -12,8 +12,22 @@ const apiRouter = require("./routes/index");
 const useAdmin = require("./routes/admin");
 const usersController = require("./controllers/usersController");
 const Product = require("./models/Product");
-const { Op } = require("sequelize");
 
+const multer = require("multer");
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "../public/img/uploads/"); // Specify the directory where files will be stored
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname); // Specify the file name
+  },
+});
+
+const upload = multer({ storage: storage });
+app.use("/uploads", express.static("uploads"));
+app.use(upload.single("image"));
+//
 const port = process.env.PORT || 3000;
 app.use(
   session({
@@ -29,13 +43,15 @@ app.use((req, res, next) => {
   next(); // Pass control to the next middleware
 });
 
-app.use(bodyParser.json()); // for parsing application/json
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(expressLayouts);
 // app.use(bodyParser.json());
+
+// file uploads
 
 // Mount your API routes
 app.use("/api", apiRouter);

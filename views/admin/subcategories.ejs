@@ -1,0 +1,399 @@
+<div
+  class="page-wrapper"
+  id="main-wrapper"
+  data-layout="vertical"
+  data-navbarbg="skin6"
+  data-sidebartype="full"
+  data-sidebar-position="fixed"
+  data-header-position="fixed"
+>
+  <!-- Sidebar Start -->
+  <%- include('sidenav.ejs') %>
+  <!--  Sidebar End -->
+  <!--  Main wrapper -->
+  <div class="body-wrapper">
+    <!--  Header Start -->
+    <header class="app-header"><%- include('nav.ejs') %></header>
+    <!--  Header End -->
+    <div class="container-fluid">
+      <button class="btn btn-primary" onclick="openNewsubcategoryModal()">
+        Add Subcategory
+      </button>
+
+      <br />
+      <br />
+      <table class="table table-hover">
+        <thead>
+          <tr>           
+            <th scope="col">#</th>
+            <th scope="col">Image</th>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Created by</th>
+            <th scope="col">Create At</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% subcategories.forEach(subcategory => { %>
+          <tr>
+            <th scope="row"><%= subcategory.id %></th>
+            <td>
+              <img
+                src="/img/uploads/<%= subcategory.imageUrl %>"
+                alt="<%= subcategory.name %>"
+                width="50"
+                height="50"
+              />
+            </td>
+
+            <td><%= subcategory.name %></td>
+            <td><%= subcategory.description %></td>
+            <td><%= subcategory.createdBy %></td>
+            <td><%= subcategory.createdAt %></td>
+            <!-- Add these buttons to the "Action" column in your table -->
+            <!-- Add these buttons to the "Action" column in your table -->
+            <td>
+              <button
+                class="btn btn-primary"
+                onclick="openModal('<%= subcategory.id %>', '<%= subcategory.name %>','<%= subcategory.description %>')"
+              >
+                Edit
+              </button>
+
+              <br />
+              <br />
+              <button
+                class="btn btn-danger"
+                onclick="deletesubcategory('<%= subcategory.id %>')"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+      <%- include('footer.ejs') %>
+    </div>
+  </div>
+</div>
+<!-- modal-title -->
+<div class="modal" id="editModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit subcategory</h5>
+        <span class="close" onclick="closeModal()">&times;</span>
+      </div>
+      <div class="container">
+        <form id="editForm" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label class="form-label" for="editName">Name:</label>
+            <input
+              type="text"
+              class="form-control"
+              aria-describedby="nameHelp"
+              id="catId"
+              name="catId"
+              hidden
+            />
+            <input
+              type="text"
+              class="form-control"
+              aria-describedby="nameHelp"
+              id="editName"
+              name="editName"
+            />
+            <div id="nameHelp" class="form-text">New subcategory name</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="editDescription">Description</label>
+            <input
+              type="text"
+              class="form-control"
+              aria-describedby="descHelp"
+              id="editDescription"
+              name="editDescription"
+            />
+            <div id="descHelp" class="form-text">subcategory Description</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="editImage"
+              >Upload new picture:</label
+            >
+            <input
+              type="file"
+              class="form-control"
+              id="editImage"
+              name="image"
+              accept="image/*"
+            />
+            <div id="imageHelp" class="form-text">New subcategory name</div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="savesubcategory()"
+            >
+              Save changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- New subcategory modal -->
+<div class="modal" id="newsubcategoryModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add New subcategory</h5>
+        <span class="close" onclick="closeNewsubcategoryModal()">&times;</span>
+      </div>
+      <div class="container">
+        <form id="newsubcategoryForm" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label class="form-label" for="newName">Name:</label>
+            <input
+              type="text"
+              class="form-control"
+              aria-describedby="newNameHelp"
+              id="newName"
+              name="newName"
+            />
+            <div id="newNameHelp" class="form-text">subcategory name</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="newDescription">Description</label>
+            <input
+              type="text"
+              class="form-control"
+              aria-describedby="newDescHelp"
+              id="newDescription"
+              name="newDescription"
+            />
+            <div id="newDescHelp" class="form-text">
+              subcategory Description
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="newImage">Upload Image:</label>
+            <input
+              type="file"
+              class="form-control"
+              id="newImage"
+              name="image"
+              accept="image/*"
+            />
+            <div id="newImageHelp" class="form-text">
+              Upload a subcategory image
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="addNewsubcategory()"
+            >
+              Add subcategory
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // JavaScript function to handle subcategory deletion
+  function deletesubcategory(subcategoryId) {
+    // You can use JavaScript to make an AJAX request to the server to delete the subcategory.
+    // For example, using the Fetch API:
+    fetch(`/api/deletesubcategory/${subcategoryId}`, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        return response.json(); // Parse the JSON response from the server
+      })
+      .then((data) => {
+        if (data.message) {
+          // subcategory deleted successfully, you can update the UI as needed
+          // For example, remove the row from the table
+          alert(data.message);
+          const row = document.querySelector(
+            `tr[data-subcategory-id="${subcategoryId}"]`
+          );
+          if (row) {
+            row.remove();
+          }
+          // Reload the page to update the table
+          window.location.reload();
+        } else {
+          // Handle error case
+          console.error("subcategory deletion failed");
+          alert("subcategory deletion failed"); // Display an error message
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred while deleting the subcategory");
+      });
+  }
+
+  // Function to open the modal for editing
+  function openModal(subcategoryId, subcategoryName, subcategoryDescription) {
+    const editNameInput = document.getElementById("editName");
+    const editDescription = document.getElementById("editDescription");
+    const catId = document.getElementById("catId");
+    // Populate the input fields with the current subcategory data
+    editNameInput.value = subcategoryName;
+    editDescription.value = subcategoryDescription;
+    catId.value = subcategoryId;
+
+    // Show the modal
+    const modal = document.getElementById("editModal");
+    modal.style.display = "block";
+  }
+
+  // Function to close the modal
+  function closeModal() {
+    const modal = document.getElementById("editModal");
+    modal.style.display = "none";
+  }
+
+  // Function to save the edited subcategory
+  function savesubcategory() {
+    console.log("savesubcategory function is called");
+
+    const editNameInput = document.getElementById("editName");
+    const editDescriptionInput = document.getElementById("editDescription");
+    const editImageInput = document.getElementById("editImage");
+    const subcategoryId = document.getElementById("catId").value;
+
+    const editedName = editNameInput.value;
+    const editedDescription = editDescriptionInput.value;
+
+    // Create a FormData object to handle file uploads
+    const formData = {
+      subcategoryId: subcategoryId,
+      name: editedName,
+      description: editedDescription,
+    };
+    // Add the selected image file to the FormData
+    const imageFile = editImageInput.files[0];
+    if (imageFile) {
+      // Convert the image file to a base64-encoded string
+      const reader = new FileReader();
+      reader.readAsDataURL(imageFile);
+      reader.onloadend = () => {
+        formData.image = reader.result;
+        // Now, you can send the newsubcategoryData as JSON
+        postEditData(formData);
+      };
+    } else {
+      // If no image was selected, send the data without the image
+      postEditData(formData);
+    }
+  }
+  function postEditData(requestData) {
+    // Convert the FormData to an object for JSON data
+
+    const apiUrl = "/api/updatesubcategory";
+    fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", // Specify that you're sending JSON data
+      },
+      body: JSON.stringify(requestData), // Convert the requestData object to JSON
+    })
+      .then((response) => {
+        if (response.ok) {
+          // subcategory updated successfully, you can update the UI as needed
+          closeModal();
+          alert("subcategory updated successfully");
+          window.location.reload();
+        } else {
+          // Handle error case
+          console.error("subcategory update failed");
+          alert("subcategory update failed"); // Display an error message
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred while updating the subcategory");
+      });
+  }
+  // Function to open the "New subcategory" modal
+  function openNewsubcategoryModal() {
+    const modal = document.getElementById("newsubcategoryModal");
+    modal.style.display = "block";
+  }
+
+  // Function to close the "New subcategory" modal
+  function closeNewsubcategoryModal() {
+    const modal = document.getElementById("newsubcategoryModal");
+    modal.style.display = "none";
+  }
+
+  // Function to add a new subcategory
+  function addNewsubcategory() {
+    const newNameInput = document.getElementById("newName");
+    const newDescriptionInput = document.getElementById("newDescription");
+    const newImageInput = document.getElementById("newImage");
+
+    const newName = newNameInput.value;
+    const newDescription = newDescriptionInput.value;
+
+    // Create an object with the new subcategory data
+    const newsubcategoryData = {
+      name: newName,
+      description: newDescription,
+    };
+
+    // Add the selected image file if available
+    const imageFile = newImageInput.files[0];
+    if (imageFile) {
+      // Convert the image file to a base64-encoded string
+      const reader = new FileReader();
+      reader.readAsDataURL(imageFile);
+      reader.onloadend = () => {
+        newsubcategoryData.image = reader.result;
+        // Now, you can send the newsubcategoryData as JSON
+        sendNewsubcategoryData(newsubcategoryData);
+      };
+    } else {
+      // If no image was selected, send the data without the image
+      sendNewsubcategoryData(newsubcategoryData);
+    }
+  }
+  function sendNewsubcategoryData(newsubcategoryData) {
+    const apiUrl = "/api/addsubcategories"; // Replace with the actual API endpoint for adding categories
+
+    fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", // Specify that you're sending JSON data
+      },
+      body: JSON.stringify(newsubcategoryData), // Convert the object to JSON
+    })
+      .then((response) => {
+        if (response.ok) {
+          // subcategory added successfully, you can update the UI as needed
+          closeNewsubcategoryModal();
+          alert("subcategory addition Successfully");
+          window.location.reload();
+        } else {
+          // Handle error case
+          console.error("subcategory addition failed");
+          alert("subcategory addition failed"); // Display an error message
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred while adding the subcategory");
+      });
+  }
+</script>

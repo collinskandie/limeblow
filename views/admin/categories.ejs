@@ -16,7 +16,10 @@
     <header class="app-header"><%- include('nav.ejs') %></header>
     <!--  Header End -->
     <div class="container-fluid">
-      <button class="btn btn-primary">Add new</button>
+      <button class="btn btn-primary" onclick="openNewCategoryModal()">
+        Add New Category
+      </button>
+
       <br />
       <br />
       <table class="table table-hover">
@@ -84,7 +87,7 @@
         <span class="close" onclick="closeModal()">&times;</span>
       </div>
       <div class="container">
-        <form id="editForm">
+        <form id="editForm" enctype="multipart/form-data">
           <div class="mb-3">
             <label class="form-label" for="editName">Name:</label>
             <input
@@ -123,7 +126,7 @@
               type="file"
               class="form-control"
               id="editImage"
-              name="editImage"
+              name="image"
               accept="image/*"
             />
             <div id="imageHelp" class="form-text">New category name</div>
@@ -135,6 +138,65 @@
               onclick="saveCategory()"
             >
               Save changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- New Category modal -->
+<div class="modal" id="newCategoryModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add New Category</h5>
+        <span class="close" onclick="closeNewCategoryModal()">&times;</span>
+      </div>
+      <div class="container">
+        <form id="newCategoryForm" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label class="form-label" for="newName">Name:</label>
+            <input
+              type="text"
+              class="form-control"
+              aria-describedby="newNameHelp"
+              id="newName"
+              name="newName"
+            />
+            <div id="newNameHelp" class="form-text">Category name</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="newDescription">Description</label>
+            <input
+              type="text"
+              class="form-control"
+              aria-describedby="newDescHelp"
+              id="newDescription"
+              name="newDescription"
+            />
+            <div id="newDescHelp" class="form-text">Category Description</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="newImage">Upload Image:</label>
+            <input
+              type="file"
+              class="form-control"
+              id="newImage"
+              name="image"
+              accept="image/*"
+            />
+            <div id="newImageHelp" class="form-text">
+              Upload a category image
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="addNewCategory()"
+            >
+              Add Category
             </button>
           </div>
         </form>
@@ -213,34 +275,31 @@
     const editedDescription = editDescriptionInput.value;
 
     // Create a FormData object to handle file uploads
-    const formData = new FormData();
-    formData.append("categoryId", categoryId);
-    formData.append("name", editedName);
-    formData.append("description", editedDescription);
-
+    const formData = {
+      categoryId: categoryId,
+      name: editedName,
+      description: editedDescription,
+    };
     // Add the selected image file to the FormData
     const imageFile = editImageInput.files[0];
     if (imageFile) {
-      formData.append("imageFile", imageFile);
-    }
-
-    // Convert the FormData to an object for JSON data
-    const requestData = {};
-    formData.forEach((value, key) => {
-      requestData[key] = value;
-    });
-    if (imageFile) {
+      // Convert the image file to a base64-encoded string
       const reader = new FileReader();
       reader.readAsDataURL(imageFile);
       reader.onloadend = () => {
-        requestData.image = reader.result; // Base64-encoded image
-        //sendJSONRequest(requestData);
+        formData.image = reader.result;
+        // Now, you can send the newCategoryData as JSON
+        postEditData(formData);
       };
+    } else {
+      // If no image was selected, send the data without the image
+      postEditData(formData);
     }
+  }
+  function postEditData(requestData) {
+    // Convert the FormData to an object for JSON data
 
     const apiUrl = "/api/updateCategory";
-
-    // Make a POST request to send the JSON data with the image file
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -263,6 +322,76 @@
       .catch((error) => {
         console.error("Error:", error);
         alert("An error occurred while updating the category");
+      });
+  }
+  // Function to open the "New Category" modal
+  function openNewCategoryModal() {
+    const modal = document.getElementById("newCategoryModal");
+    modal.style.display = "block";
+  }
+
+  // Function to close the "New Category" modal
+  function closeNewCategoryModal() {
+    const modal = document.getElementById("newCategoryModal");
+    modal.style.display = "none";
+  }
+
+  // Function to add a new category
+  function addNewCategory() {
+    const newNameInput = document.getElementById("newName");
+    const newDescriptionInput = document.getElementById("newDescription");
+    const newImageInput = document.getElementById("newImage");
+
+    const newName = newNameInput.value;
+    const newDescription = newDescriptionInput.value;
+
+    // Create an object with the new category data
+    const newCategoryData = {
+      name: newName,
+      description: newDescription,
+    };
+
+    // Add the selected image file if available
+    const imageFile = newImageInput.files[0];
+    if (imageFile) {
+      // Convert the image file to a base64-encoded string
+      const reader = new FileReader();
+      reader.readAsDataURL(imageFile);
+      reader.onloadend = () => {
+        newCategoryData.image = reader.result;
+        // Now, you can send the newCategoryData as JSON
+        sendNewCategoryData(newCategoryData);
+      };
+    } else {
+      // If no image was selected, send the data without the image
+      sendNewCategoryData(newCategoryData);
+    }
+  }
+  function sendNewCategoryData(newCategoryData) {
+    const apiUrl = "/api/addcategories"; // Replace with the actual API endpoint for adding categories
+
+    fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", // Specify that you're sending JSON data
+      },
+      body: JSON.stringify(newCategoryData), // Convert the object to JSON
+    })
+      .then((response) => {
+        if (response.ok) {
+          // Category added successfully, you can update the UI as needed
+          closeNewCategoryModal();
+          alert("Category addition Successfully");
+          window.location.reload();
+        } else {
+          // Handle error case
+          console.error("Category addition failed");
+          alert("Category addition failed"); // Display an error message
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred while adding the category");
       });
   }
 </script>

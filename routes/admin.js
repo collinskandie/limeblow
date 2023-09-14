@@ -2,11 +2,12 @@ const express = require("express");
 const router = express.Router();
 const Category = require("../models/Category");
 const Product = require("../models/Product");
+const Subcategory = require("../models/Subcategory");
 
 router.get("/", async (req, res) => {
   try {
     res.render("admin/index", {
-      title: "Login",
+      title: "Dashboard",
       layout: "layouts/admin_layout",
     });
   } catch (error) {
@@ -32,6 +33,32 @@ router.get("/categories", async (req, res) => {
       title: "System Categories",
       layout: "layouts/admin_layout",
       categories,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(404).json(error);
+  }
+});
+router.get("/subcategories", async (req, res) => {
+  try {
+    const subcategories = await Subcategory.findAll();
+    res.render("admin/subcategories", {
+      title: "System subcategories",
+      layout: "layouts/admin_layout",
+      subcategories,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(404).json(error);
+  }
+});
+router.get("/list-products", async (req, res) => {
+  try {
+    const productlist = await Product.findAll();
+    res.render("admin/productlist", {
+      title: "System Products",
+      layout: "layouts/admin_layout",
+      productlist,
     });
   } catch (error) {
     console.error(error);

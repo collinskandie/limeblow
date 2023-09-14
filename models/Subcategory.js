@@ -12,7 +12,7 @@ const Subcategory = sequelize.define('Subcategory', {
     type: DataTypes.STRING,
     allowNull: false
   },
-  description: {
+  description: { 
     type: DataTypes.TEXT
   },
   imageUrl: {

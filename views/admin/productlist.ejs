@@ -1,0 +1,405 @@
+<div
+  class="page-wrapper"
+  id="main-wrapper"
+  data-layout="vertical"
+  data-navbarbg="skin6"
+  data-sidebartype="full"
+  data-sidebar-position="fixed"
+  data-header-position="fixed"
+>
+  <!-- Sidebar Start -->
+  <%- include('sidenav.ejs') %>
+  <!--  Sidebar End -->
+  <!--  Main wrapper -->
+  <div class="body-wrapper">
+    <!--  Header Start -->
+    <header class="app-header"><%- include('nav.ejs') %></header>
+    <!--  Header End -->
+    <div class="container-fluid">
+      <button class="btn btn-primary" onclick="openNewProductModal()">
+        Add Product
+      </button>
+
+      <br />
+      <br />
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            productid, name, description, imagesurl, cost, price, quantity,
+            size, weight, color, availability, category, subCategory, timestamp,
+            updatedby, createdAt, updatedAt
+            <th scope="col">#</th>
+            <th scope="col">Image</th>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Assembly cost</th>
+            <th scope="col">Selling Price</th>
+            <th scope="col">Category</th>
+            <th scope="col">Available Quantity</th>
+            <th scope="col">Updated by</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% productlist.forEach(Product => { %>
+          <tr>
+            <th scope="row"><%= Product.productid %></th>
+            <td>
+              <img
+                src="/img/uploads/<%= Array.isArray(Product.imagesurl) ? Product.imagesurl[0] : Product.imagesurl %>"
+                alt="<%= Product.name %>"
+                width="50"
+                height="50"
+              />
+            </td>
+
+            <td><%= Product.name %></td>
+            <td><%= Product.description %></td>
+            <td><%= Product.cost %></td>
+            <td><%= Product.price %></td>
+            <td><%= Product.category %></td>
+            <td><%= Product.quantity %></td>
+            <td><%= Product.subcategory %></td>
+            <td><%= Product.updatedby %></td>
+            <td>
+              <button
+                class="btn btn-primary"
+                onclick="openModal('<%= Product.productid %>', '<%= Product.name %>','<%= Product.description %>')"
+              >
+                Edit
+              </button>
+
+              <br />
+              <br />
+              <button
+                class="btn btn-danger"
+                onclick="deleteProduct('<%= Product.productid %>')"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+      <%- include('footer.ejs') %>
+    </div>
+  </div>
+</div>
+<!-- modal-title -->
+<div class="modal" id="editModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Product</h5>
+        <span class="close" onclick="closeModal()">&times;</span>
+      </div>
+      <div class="container">
+        <form id="editForm" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label class="form-label" for="editName">Name:</label>
+            <input
+              type="text"
+              class="form-control"
+              aria-describedby="nameHelp"
+              id="catId"
+              name="catId"
+              hidden
+            />
+            <input
+              type="text"
+              class="form-control"
+              aria-describedby="nameHelp"
+              id="editName"
+              name="editName"
+            />
+            <div id="nameHelp" class="form-text">New Product name</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="editDescription">Description</label>
+            <input
+              type="text"
+              class="form-control"
+              aria-describedby="descHelp"
+              id="editDescription"
+              name="editDescription"
+            />
+            <div id="descHelp" class="form-text">Product Description</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="editImage"
+              >Upload new picture:</label
+            >
+            <input
+              type="file"
+              class="form-control"
+              id="editImage"
+              name="image"
+              accept="image/*"
+            />
+            <div id="imageHelp" class="form-text">New Product name</div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="saveProduct()"
+            >
+              Save changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- New Product modal -->
+<div class="modal" id="newProductModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Add New Product</h5>
+        <span class="close" onclick="closeNewProductModal()">&times;</span>
+      </div>
+      <div class="container">
+        <form id="newProductForm" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label class="form-label" for="newName">Name:</label>
+            <input
+              type="text"
+              class="form-control"
+              aria-describedby="newNameHelp"
+              id="newName"
+              name="newName"
+            />
+            <div id="newNameHelp" class="form-text">Product name</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="newDescription">Description</label>
+            <input
+              type="text"
+              class="form-control"
+              aria-describedby="newDescHelp"
+              id="newDescription"
+              name="newDescription"
+            />
+            <div id="newDescHelp" class="form-text">Product Description</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="newImage">Upload Image:</label>
+            <input
+              type="file"
+              class="form-control"
+              id="newImage"
+              name="image"
+              accept="image/*"
+            />
+            <div id="newImageHelp" class="form-text">
+              Upload a Product image
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="addNewProduct()"
+            >
+              Add Product
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // JavaScript function to handle Product deletion
+  function deleteProduct(ProductId) {
+    // You can use JavaScript to make an AJAX request to the server to delete the Product.
+    // For example, using the Fetch API:
+    fetch(`/api/deleteProduct/${ProductId}`, {
+      method: "DELETE",
+    })
+      .then((response) => {
+        return response.json(); // Parse the JSON response from the server
+      })
+      .then((data) => {
+        if (data.message) {
+          // Product deleted successfully, you can update the UI as needed
+          // For example, remove the row from the table
+          alert(data.message);
+          const row = document.querySelector(
+            `tr[data-Product-id="${ProductId}"]`
+          );
+          if (row) {
+            row.remove();
+          }
+          // Reload the page to update the table
+          window.location.reload();
+        } else {
+          // Handle error case
+          console.error("Product deletion failed");
+          alert("Product deletion failed"); // Display an error message
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred while deleting the Product");
+      });
+  }
+
+  // Function to open the modal for editing
+  function openModal(ProductId, ProductName, ProductDescription) {
+    const editNameInput = document.getElementById("editName");
+    const editDescription = document.getElementById("editDescription");
+    const catId = document.getElementById("catId");
+    // Populate the input fields with the current Product data
+    editNameInput.value = ProductName;
+    editDescription.value = ProductDescription;
+    catId.value = ProductId;
+
+    // Show the modal
+    const modal = document.getElementById("editModal");
+    modal.style.display = "block";
+  }
+
+  // Function to close the modal
+  function closeModal() {
+    const modal = document.getElementById("editModal");
+    modal.style.display = "none";
+  }
+
+  // Function to save the edited Product
+  function saveProduct() {
+    console.log("saveProduct function is called");
+
+    const editNameInput = document.getElementById("editName");
+    const editDescriptionInput = document.getElementById("editDescription");
+    const editImageInput = document.getElementById("editImage");
+    const ProductId = document.getElementById("catId").value;
+
+    const editedName = editNameInput.value;
+    const editedDescription = editDescriptionInput.value;
+
+    // Create a FormData object to handle file uploads
+    const formData = {
+      ProductId: ProductId,
+      name: editedName,
+      description: editedDescription,
+    };
+    // Add the selected image file to the FormData
+    const imageFile = editImageInput.files[0];
+    if (imageFile) {
+      // Convert the image file to a base64-encoded string
+      const reader = new FileReader();
+      reader.readAsDataURL(imageFile);
+      reader.onloadend = () => {
+        formData.image = reader.result;
+        // Now, you can send the newProductData as JSON
+        postEditData(formData);
+      };
+    } else {
+      // If no image was selected, send the data without the image
+      postEditData(formData);
+    }
+  }
+  function postEditData(requestData) {
+    // Convert the FormData to an object for JSON data
+
+    const apiUrl = "/api/updateProduct";
+    fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", // Specify that you're sending JSON data
+      },
+      body: JSON.stringify(requestData), // Convert the requestData object to JSON
+    })
+      .then((response) => {
+        if (response.ok) {
+          // Product updated successfully, you can update the UI as needed
+          closeModal();
+          alert("Product updated successfully");
+          window.location.reload();
+        } else {
+          // Handle error case
+          console.error("Product update failed");
+          alert("Product update failed"); // Display an error message
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred while updating the Product");
+      });
+  }
+  // Function to open the "New Product" modal
+  function openNewProductModal() {
+    const modal = document.getElementById("newProductModal");
+    modal.style.display = "block";
+  }
+
+  // Function to close the "New Product" modal
+  function closeNewProductModal() {
+    const modal = document.getElementById("newProductModal");
+    modal.style.display = "none";
+  }
+
+  // Function to add a new Product
+  function addNewProduct() {
+    const newNameInput = document.getElementById("newName");
+    const newDescriptionInput = document.getElementById("newDescription");
+    const newImageInput = document.getElementById("newImage");
+
+    const newName = newNameInput.value;
+    const newDescription = newDescriptionInput.value;
+
+    // Create an object with the new Product data
+    const newProductData = {
+      name: newName,
+      description: newDescription,
+    };
+
+    // Add the selected image file if available
+    const imageFile = newImageInput.files[0];
+    if (imageFile) {
+      // Convert the image file to a base64-encoded string
+      const reader = new FileReader();
+      reader.readAsDataURL(imageFile);
+      reader.onloadend = () => {
+        newProductData.image = reader.result;
+        // Now, you can send the newProductData as JSON
+        sendNewProductData(newProductData);
+      };
+    } else {
+      // If no image was selected, send the data without the image
+      sendNewProductData(newProductData);
+    }
+  }
+  function sendNewProductData(newProductData) {
+    const apiUrl = "/api/addProduct"; // Replace with the actual API endpoint for adding categories
+
+    fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", // Specify that you're sending JSON data
+      },
+      body: JSON.stringify(newProductData), // Convert the object to JSON
+    })
+      .then((response) => {
+        if (response.ok) {
+          // Product added successfully, you can update the UI as needed
+          closeNewProductModal();
+          alert("Product addition Successfully");
+          window.location.reload();
+        } else {
+          // Handle error case
+          console.error("Product addition failed");
+          alert("Product addition failed"); // Display an error message
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred while adding the Product");
+      });
+  }
+</script>

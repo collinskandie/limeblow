@@ -8,7 +8,6 @@ const blogController = require("../controllers/blogController");
 const authenticateToken = require("../middleware/authenticateToken"); // use this for api routes that needs to be verified for auth
 const usersRouter = require("./users");
 const paymentRoutes = require("./payments");
-
 // #products api
 router.get("/products", productsController.getAllProducts);
 router.get("/productsbyId/:productId", productsController.getProduct);
@@ -22,8 +21,18 @@ router.delete(
   "/deleteCategory/:categoryId",
   categoriesController.deleteCategory
 );
-router.post("/updateCategory",categoriesController.editCategory);
+router.post("/updateCategory", categoriesController.editCategory);
 router.post("/addcategories", categoriesController.AddCategories);
+
+// subcategories apis
+
+router.delete(
+  "/deletesubcategory/:subcategoryId",
+  categoriesController.deletesubCategory
+);
+router.post("/updatesubcategory", categoriesController.editsubCategory);
+router.post("/addsubcategories", categoriesController.AddsubCategories);
+
 //manage users
 router.use("/users", usersRouter);
 router.use("/payments", paymentRoutes);
