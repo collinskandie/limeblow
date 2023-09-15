@@ -1,9 +1,9 @@
 {
   "development": {
-    "username": "root",
+    "username": "limebowg_collo",
     "password": "Collin@Admin",
-    "database": "limebow",
-    "host": "127.0.0.1",
+    "database": "limebowg_limebow",
+    "host": "localhost",
     "dialect": "mysql"
   },
   "test": {
@@ -14,10 +14,10 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "limebow",
-    "host": "127.0.0.1",
+    "username": "limebowg_collo",
+    "password": "Collin@Admin",
+    "database": "limebowg_limebow",
+    "host": "localhost",
     "dialect": "mysql"
   }
 }
