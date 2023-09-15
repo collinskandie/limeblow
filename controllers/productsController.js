@@ -39,6 +39,7 @@ async function addProduct(req, res) {
       quantity,
       size,
       weight,
+      category,
       color,
       availability,
     } = req.body;
@@ -71,6 +72,7 @@ async function addProduct(req, res) {
       quantity,
       size,
       weight,
+      category,
       color,
       availability,
       imagesurl: imageFilenames, // Include the image filenames array in the product data
@@ -103,11 +105,14 @@ async function updateProduct(req, res) {
       price,
       quantity,
       size,
+      category,
+      subcategory,
       weight,
       color,
       availability,
     } = req.body;
     const updatedby = "Admin";
+    console.log();
     const imageFilenames = [];
 
     const originalProduct = await Product.findByPk(ProductId);
@@ -134,6 +139,8 @@ async function updateProduct(req, res) {
       size: size,
       weight: weight,
       color: color,
+      category: category,
+      subCategory: subcategory,
       availability: availability,
       imagesurl: imageFilenames, // Include the image filenames array in the product data
       updatedby: updatedby,
@@ -159,6 +166,26 @@ async function updateProduct(req, res) {
     });
   }
 }
+async function deleteProduct(req, res) {
+  try {
+    const productId = req.params.productId;
+    // console.log(req.body);
+    const product = await Product.findByPk(productId);
+    if (!product) {
+      console.log("Product not foud");
+      return res.json(404).json({ error: "Product not found" });
+    }
+    await product.destroy();
+    return res.status(200).json({ message: "category deleted successfully" });
+  } catch (error) {
+    console.error("Deleting products:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error deleteingproducts",
+      error: error.message,
+    });
+  }
+}
 
 async function generateTestProducts(req, res) {
   try {
@@ -180,10 +207,8 @@ async function generateTestProducts(req, res) {
         updatedby: "Admin",
       });
     }
-
     // Bulk insert test products
     await Product.bulkCreate(testProducts);
-
     res.status(201).json({
       success: true,
       message: `${numProducts} test products generated and added successfully`,
@@ -204,4 +229,5 @@ module.exports = {
   generateTestProducts,
   getProduct,
   updateProduct,
+  deleteProduct,
 };

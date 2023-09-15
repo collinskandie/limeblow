@@ -1,6 +1,6 @@
 // models/AdminUser.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('../db'); // Your database connection
+const sequelize = require('../config/db'); // Your database connection
 
 const AdminUser = sequelize.define('AdminUser', {
   id: {

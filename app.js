@@ -13,20 +13,6 @@ const useAdmin = require("./routes/admin");
 const usersController = require("./controllers/usersController");
 const Product = require("./models/Product");
 
-const multer = require("multer");
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "../public/img/uploads/"); // Specify the directory where files will be stored
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname); // Specify the file name
-  },
-});
-
-const upload = multer({ storage: storage });
-app.use("/uploads", express.static("uploads"));
-app.use(upload.single("image"));
 //
 const port = process.env.PORT || 3000;
 app.use(
@@ -49,17 +35,13 @@ app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 app.set("view engine", "ejs");
 app.use(express.static("public"));
 app.use(expressLayouts);
-// app.use(bodyParser.json());
 
-// file uploads
-
-// Mount your API routes
 app.use("/api", apiRouter);
 //admin routes
 app.use("/admin", useAdmin);
 app.post("/login", usersController.login);
 const runMigration = require("./controllers/migrate");
-const Blog = require("./models/blog"); 
+const Blog = require("./models/blog");
 app.get("/run-migrations", runMigration.runMigrations);
 
 // Define your other routes here
@@ -399,6 +381,12 @@ app.get("/search", async (req, res) => {
   );
 
   res.json(suggestions);
+});
+app.use((req, res) => {
+  res.status(404).render("404", {
+    title: "404",
+    layout: "layouts/master",
+  }); // Render the '404.ejs' template
 });
 
 // Start the server

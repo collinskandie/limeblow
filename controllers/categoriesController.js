@@ -38,7 +38,7 @@ async function AddCategories(req, res) {
 }
 
 const deleteCategory = async (req, res) => {
-  const categoryId = req.params.categoryId;
+  const categoryId = req.params.categoryId; 
 
   try {
     // Attempt to find the category by ID
@@ -62,7 +62,6 @@ const deleteCategory = async (req, res) => {
 const editCategory = async (req, res) => {
   try {
     const { categoryId, name, description, image } = req.body;
-
     // Fetch the original category data
     const originalCategory = await Category.findByPk(categoryId);
 

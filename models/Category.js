@@ -1,6 +1,6 @@
 // models/Category.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('../db'); // Your database connection
+const sequelize = require('../config/db'); // Your database connection
 
 const Category = sequelize.define('Category', {
   id: {

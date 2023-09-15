@@ -13,6 +13,7 @@ router.get("/products", productsController.getAllProducts);
 router.get("/productsbyId/:productId", productsController.getProduct);
 router.post("/addproduct", productsController.addProduct);
 router.post("/updateProduct", productsController.updateProduct);
+router.delete('/deleteProduct/:productId', productsController.deleteProduct)
 router.get("/generate-test-products", productsController.generateTestProducts);
 // router.get('/copy', copyImage);
 
