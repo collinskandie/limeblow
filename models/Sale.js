@@ -1,10 +1,10 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("../db"); // Your database connection
+const sequelize = require("../config/db"); // Your database connection
 
 const Sale = sequelize.define("Sale", {
   invoiceNumber: {
     type: DataTypes.STRING,
-    primaryKey: true, // Use an existing column as the primary key
+    primaryKey: true,
     allowNull: false,
     unique: true,
   },
@@ -18,6 +18,10 @@ const Sale = sequelize.define("Sale", {
   paymentReceipt: {
     type: DataTypes.STRING,
     allowNull: true,
+  },
+  status: {
+    type: DataTypes.STRING,
+    defaultValue: "to be delivered", // Default status
   },
   timestamp: {
     type: DataTypes.DATE,

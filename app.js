@@ -3,7 +3,7 @@ const bodyParser = require("body-parser");
 const expressLayouts = require("express-ejs-layouts");
 const session = require("express-session");
 
-const sequelize = require("./db");
+const sequelize = require("./config/db");
 const Category = require("./models/Category");
 require("dotenv").config();
 const app = express();

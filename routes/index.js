@@ -4,6 +4,7 @@ const router = express.Router();
 const productsController = require("../controllers/productsController");
 const categoriesController = require("../controllers/categoriesController");
 const blogController = require("../controllers/blogController");
+const paymentsController = require("../controllers/paymentsController");
 
 const authenticateToken = require("../middleware/authenticateToken"); // use this for api routes that needs to be verified for auth
 const usersRouter = require("./users");
@@ -13,7 +14,7 @@ router.get("/products", productsController.getAllProducts);
 router.get("/productsbyId/:productId", productsController.getProduct);
 router.post("/addproduct", productsController.addProduct);
 router.post("/updateProduct", productsController.updateProduct);
-router.delete('/deleteProduct/:productId', productsController.deleteProduct)
+router.delete("/deleteProduct/:productId", productsController.deleteProduct);
 router.get("/generate-test-products", productsController.generateTestProducts);
 // router.get('/copy', copyImage);
 
@@ -40,6 +41,10 @@ router.use("/users", usersRouter);
 router.use("/payments", paymentRoutes);
 
 // blog routes
-router.post("/newblog", blogController.addBlog);
+router.post("/addblogs", blogController.addBlog);
+router.delete("/deleteblog/:blogId", blogController.deleteBlog);
 // router.post("/deleteblog", blogController.deleteBlog);
+
+router.post("/dispatch", paymentsController.saveDispatch);
+router.get("/getdispatch/:invoiceId", paymentsController.getDispatch);
 module.exports = router;

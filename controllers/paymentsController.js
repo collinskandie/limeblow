@@ -2,7 +2,8 @@ const Payments = require("../models/Payment");
 const ReceiptItem = require("../models/ReceiptItem");
 const Sale = require("../models/Sale");
 const axios = require("axios");
-
+const { saveBase64Image } = require("./savefile");
+const Dispatch = require("../models/dispatch");
 // Define these variables at the module level
 let mpesa_no = "";
 let new_amount = 0;
@@ -190,9 +191,71 @@ async function newCard(req, res) {
     res.status(500).json({ error: "Error addding customer" });
   }
 }
+async function saveDispatch(req, res) {
+  try {
+    const { invoiceNumber, deliveryPersonName, description, images } = req.body;
+    const imageFilenames = [];
+    const newStatus = "dispatched";
+
+    if (req.body.images) {
+      for (const image of images) {
+        const imageData = image;
+        const newImageName = await saveBase64Image(imageData);
+        imageFilenames.push(newImageName);
+      }
+    }
+    const sale = await Sale.findByPk(invoiceNumber);
+    sale.status = newStatus;
+
+    // Save the changes
+    await sale.save();
+
+    const newDispatch = await Dispatch.create({
+      invoiceNumber: invoiceNumber,
+      deliveryPersonName: deliveryPersonName,
+      description: description,
+      imageURL: imageFilenames,
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Items Successfully dispatched",
+      product: newDispatch,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error saving dispatch" });
+  }
+}
+async function getDispatch(req, res) {
+  try {
+    const invoice = req.params.invoiceId;
+    const dispatch = await Dispatch.findOne({
+      where: { invoiceNumber: invoice },
+    });
+    console.log(dispatch);
+
+    if (dispatch) {
+      return res.status(200).json({
+        data: dispatch,
+        success: true,
+      });
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: "Dispatch not found",
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
 
 module.exports = {
   newMpesa,
   newCard,
   mpesaCallBack,
+  saveDispatch,
+  getDispatch,
 };

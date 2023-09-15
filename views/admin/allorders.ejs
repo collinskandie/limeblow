@@ -1,0 +1,314 @@
+<div
+  class="page-wrapper"
+  id="main-wrapper"
+  data-layout="vertical"
+  data-navbarbg="skin6"
+  data-sidebartype="full"
+  data-sidebar-position="fixed"
+  data-header-position="fixed"
+>
+  <!-- Sidebar Start -->
+  <%- include('sidenav.ejs') %>
+  <!--  Sidebar End -->
+  <!--  Main wrapper -->
+  <div class="body-wrapper">
+    <!--  Header Start -->
+    <header class="app-header"><%- include('nav.ejs') %></header>
+    <!--  Header End -->
+    <div class="container-fluid">
+      <h1>All Orders</h1>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Item Counts</th>
+            <th scope="col">Invoice Total</th>
+            <th scope="col">Payment Receipt</th>
+            <th scope="col">Customer</th>
+            <th scope="col">Time & Date</th>
+            <th scope="col">Status</th>
+            <!-- <th scope="col">Time & Date</th> -->
+          </tr>
+        </thead>
+        <tbody>
+          <% sales.forEach(sale => { %>
+          <tr>
+            <th scope="row"><%= sale.invoiceNumber %></th>
+            <td><%= sale.itemsCount %></td>
+            <td><%= sale.totalCost %></td>
+            <td><%= sale.paymentReceipt %></td>
+            <td><%= sale.user %></td>
+            <td><%= sale.createdAt %></td>
+            <td>
+              <% if (sale.status == "to be delivered"){ %>
+              <button
+                class="btn btn-primary"
+                onclick="openModal('<%= sale.invoiceNumber %>')"
+              >
+                Deliver
+              </button>
+              <% } else { %>
+              <button
+                class="btn btn-success"
+                onclick="openStatus('<%= sale.invoiceNumber %>')"
+              >
+                Delivered
+              </button>
+              <% } %>
+            </td>
+          </tr>
+          <% }); %>
+        </tbody>
+      </table>
+      <%- include('footer.ejs') %>
+    </div>
+  </div>
+</div>
+<div class="modal" id="editModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delivery Information</h5>
+        <span class="close" onclick="closeModal()">&times;</span>
+      </div>
+      <div class="container">
+        <form id="editForm" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label class="form-label" for="Name">Delivery person name:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="invoiceNumber"
+              name="invoiceNumber"
+              hidden
+            />
+            <input
+              type="text"
+              class="form-control"
+              aria-describedby="nameHelp"
+              id="deliveryName"
+              name="deliveryName"
+            />
+            <div id="nameHelp" class="form-text">
+              Enter the delivery person name
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="contacts">Contact Details</label>
+            <input
+              type="text"
+              class="form-control"
+              aria-describedby="descHelp"
+              id="contacts"
+              name="contacts"
+              placeholder="07XXXXXXX"
+            />
+            <div id="descHelp" class="form-text">Enter their phone number</div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="contacts">Description</label>
+            <textarea
+              type="text"
+              class="form-control"
+              aria-describedby="descHelp"
+              id="contact_decription"
+              name="contact_decription"
+            ></textarea>
+            <div id="descHelp" class="form-text">
+              Please describe the delivery person
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="editImage">Upload Photo</label>
+            <input
+              type="file"
+              class="form-control"
+              id="deliveryImages"
+              name="image"
+              accept="image/*"
+              multiple
+            />
+            <div id="imageHelp" class="form-text">Attach photo evidence</div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="dispatchItems()"
+            >
+              Dispatch Items
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal" id="checkStatusModal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delivery Information</h5>
+        <span class="close" onclick="closeStatus()">&times;</span>
+      </div>
+      <div class="container">
+        <!-- show backend response here  -->
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function openModal(invoiceNumber) {
+    const editNameInput = document.getElementById("editName");
+    const invoiceNo = document.getElementById("invoiceNumber");
+    invoiceNo.value = invoiceNumber;
+    const modal = document.getElementById("editModal");
+    modal.style.display = "block";
+  }
+  function closeModal() {
+    const modal = document.getElementById("editModal");
+    modal.style.display = "none";
+  }
+
+  function openStatus(invoiceNumber) {
+    const modal = document.getElementById("checkStatusModal");
+    const apiUrl = `/api/getdispatch/${invoiceNumber}`;
+
+    fetch(apiUrl, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json(); // Parse the JSON response from the API
+        } else {
+          // Handle error case
+          console.error("API request failed");
+          alert("API request failed"); // Display an error message
+          throw new Error("API request failed");
+        }
+      })
+      .then((data) => {
+        const dispatch = data.data;
+
+        if (dispatch) {
+          const tableHtml = `
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Reference</th>
+                    <th scope="col">Invoice Number</th>
+                    <th scope="col">Delivery Person Name</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Timestamp</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">${dispatch.id}</th>
+                    <td>${dispatch.invoiceNumber}</td>
+                    <td>${dispatch.deliveryPersonName}</td>
+                    <td>${dispatch.description}</td>
+                    <td>${dispatch.timestamp}</td>
+                  </tr>
+                </tbody>
+              </table>
+            `;
+
+          // Now, you can display the generated table HTML inside the modal container
+          const modalContainer = document.querySelector(".container");
+          modalContainer.innerHTML = tableHtml;
+
+          const modal = document.getElementById("checkStatusModal");
+          modal.style.display = "block";
+        } else {
+          // Handle the case where dispatch is not defined (API response issue)
+          console.error("Dispatch data is not defined");
+          alert("Dispatch data is not defined");
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred");
+      });
+  }
+
+  function closeStatus() {
+    const modal = document.getElementById("checkStatusModal");
+    modal.style.display = "none";
+  }
+
+  function dispatchItems() {
+    const invoiceNumber = document.getElementById("invoiceNumber");
+    const deliveryName = document.getElementById("deliveryName");
+    const contacts = document.getElementById("contacts");
+    const contact_decription = document.getElementById("contact_decription");
+    const deliveryImages = document.getElementById("deliveryImages");
+
+    const newDispatch = {
+      invoiceNumber: invoiceNumber.value,
+      deliveryPersonName: deliveryName.value,
+      description: contact_decription.value,
+    };
+
+    const imageFiles = deliveryImages.files;
+    if (imageFiles.length > 0) {
+      const imagePromises = [];
+      for (const imageFile of imageFiles) {
+        const reader = new FileReader();
+        reader.readAsDataURL(imageFile);
+        const imagePromise = new Promise((resolve, reject) => {
+          reader.onloadend = () => {
+            resolve(reader.result);
+          };
+          reader.onerror = (error) => {
+            reject(error);
+          };
+        });
+        imagePromises.push(imagePromise);
+      }
+
+      Promise.all(imagePromises)
+        .then((imageResults) => {
+          newDispatch.images = imageResults;
+          // Now, you can send the newDispatch as JSON
+          sendnewDispatch(newDispatch);
+        })
+        .catch((error) => {
+          console.error("Error reading image files:", error);
+          alert("An error occurred while reading image files");
+        });
+    } else {
+      // If no image was selected, send the data without the image
+      sendnewDispatch(newDispatch);
+    }
+  }
+  function sendnewDispatch(newDispatch) {
+    const apiUrl = "/api/dispatch";
+    fetch(apiUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newDispatch),
+    })
+      .then((response) => {
+        if (response.ok) {
+          closeModal();
+          alert("Product Successfully dispatched");
+          window.location.reload();
+        } else {
+          // Handle error case
+          console.error(" failed");
+          alert(" failed"); // Display an error message
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+        alert("An error occurred");
+      });
+  }
+</script>

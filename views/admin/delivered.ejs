@@ -1,0 +1,50 @@
+<div
+  class="page-wrapper"
+  id="main-wrapper"
+  data-layout="vertical"
+  data-navbarbg="skin6"
+  data-sidebartype="full"
+  data-sidebar-position="fixed"
+  data-header-position="fixed"
+>
+  <!-- Sidebar Start -->
+  <%- include('sidenav.ejs') %>
+  <!-- Sidebar End -->
+  <!-- Main wrapper -->
+  <div class="body-wrapper">
+    <!-- Header Start -->
+    <header class="app-header"><%- include('nav.ejs') %></header>
+    <!-- Header End -->
+    <div class="container-fluid">
+      <h1>All Orders</h1>
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Item Counts</th>
+            <th scope="col">Invoice Total</th>
+            <th scope="col">Payment Receipt</th>
+            <th scope="col">Customer</th>
+            <th scope="col">Time & Date</th>
+            <th scope="col">Status</th>
+            <!-- <th scope="col">Time & Date</th> -->
+          </tr>
+        </thead>
+        <tbody>
+          <% sales.forEach(sale => { if (sale.status !== "to be delivered") { %>
+          <tr>
+            <th scope="row"><%= sale.invoiceNumber %></th>
+            <td><%= sale.itemsCount %></td>
+            <td><%= sale.totalCost %></td>
+            <td><%= sale.paymentReceipt %></td>
+            <td><%= sale.user %></td>
+            <td><%= sale.createdAt %></td>
+            <td><%= sale.status %></td>
+          </tr>
+          <% } %> <% }); %>
+        </tbody>
+      </table>
+      <%- include('footer.ejs') %>
+    </div>
+  </div>
+</div>

@@ -16,8 +16,8 @@
     <header class="app-header"><%- include('nav.ejs') %></header>
     <!--  Header End -->
     <div class="container-fluid">
-      <button class="btn btn-primary" onclick="openNewCategoryModal()">
-        Add New Category
+      <button class="btn btn-primary" onclick="openNewBlogModal()">
+        Add New Blog
       </button>
 
       <br />
@@ -26,46 +26,33 @@
         <thead>
           <tr>
             <th scope="col">#</th>
-            <th scope="col">Image</th>
+            <th scope="col">Title</th>
             <th scope="col">Name</th>
             <th scope="col">Description</th>
             <th scope="col">Created by</th>
-            <th scope="col">Create At</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
         <tbody>
-          <% categories.forEach(category => { %>
+          <% blogs.forEach(blog => { %>
           <tr>
-            <th scope="row"><%= category.id %></th>
+            <th scope="row"><%= blog.id %></th>
             <td>
               <img
-                src="/img/uploads/<%= category.imageUrl %>"
-                alt="Category Image"
+                src="/img/uploads/<%= blog.image %>"
+                alt="blog Image"
                 width="50"
                 height="50"
               />
             </td>
-
-            <td><%= category.name %></td>
-            <td><%= category.description %></td>
-            <td><%= category.createdBy %></td>
-            <td><%= category.createdAt %></td>
-            <!-- Add these buttons to the "Action" column in your table -->
-            <!-- Add these buttons to the "Action" column in your table -->
+            <td><%= blog.title %></td>
+            <td><%= blog.description %></td>
+            <td><%= blog.createdBy %></td>
+            <td><%= blog.createdAt %></td>
             <td>
               <button
-                class="btn btn-primary"
-                onclick="openModal('<%= category.id %>', '<%= category.name %>','<%= category.description %>')"
-              >
-                Edit
-              </button>
-
-              <br />
-              <br />
-              <button
                 class="btn btn-danger"
-                onclick="deleteCategory('<%= category.id %>')"
+                onclick="deleteblog('<%= blog.id %>')"
               >
                 Delete
               </button>
@@ -83,7 +70,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Edit Category</h5>
+        <h5 class="modal-title">Edit blog</h5>
         <span class="close" onclick="closeModal()">&times;</span>
       </div>
       <div class="container">
@@ -105,7 +92,7 @@
               id="editName"
               name="editName"
             />
-            <div id="nameHelp" class="form-text">New category name</div>
+            <div id="nameHelp" class="form-text">New blog name</div>
           </div>
           <div class="mb-3">
             <label class="form-label" for="editDescription">Description</label>
@@ -116,7 +103,7 @@
               id="editDescription"
               name="editDescription"
             />
-            <div id="descHelp" class="form-text">Category Description</div>
+            <div id="descHelp" class="form-text">blog Description</div>
           </div>
           <div class="mb-3">
             <label class="form-label" for="editImage"
@@ -129,14 +116,10 @@
               name="image"
               accept="image/*"
             />
-            <div id="imageHelp" class="form-text">New category name</div>
+            <div id="imageHelp" class="form-text">New blog name</div>
           </div>
           <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-primary"
-              onclick="saveCategory()"
-            >
+            <button type="button" class="btn btn-primary" onclick="saveblog()">
               Save changes
             </button>
           </div>
@@ -145,26 +128,26 @@
     </div>
   </div>
 </div>
-<!-- New Category modal -->
-<div class="modal" id="newCategoryModal" tabindex="-1">
+<!-- New blog modal -->
+<div class="modal" id="newblogModal" tabindex="-1">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Add New Category</h5>
-        <span class="close" onclick="closeNewCategoryModal()">&times;</span>
+        <h5 class="modal-title">Add New Blog</h5>
+        <span class="close" onclick="closeNewblogModal()">&times;</span>
       </div>
       <div class="container">
-        <form id="newCategoryForm" enctype="multipart/form-data">
+        <form id="newblogForm" enctype="multipart/form-data">
           <div class="mb-3">
-            <label class="form-label" for="newName">Name:</label>
+            <label class="form-label" for="newName">Title:</label>
             <input
               type="text"
               class="form-control"
               aria-describedby="newNameHelp"
-              id="newName"
-              name="newName"
+              id="blogtitle"
+              name="blogtitle"
             />
-            <div id="newNameHelp" class="form-text">Category name</div>
+            <div id="newNameHelp" class="form-text">Blog Title</div>
           </div>
           <div class="mb-3">
             <label class="form-label" for="newDescription">Description</label>
@@ -175,7 +158,7 @@
               id="newDescription"
               name="newDescription"
             />
-            <div id="newDescHelp" class="form-text">Category Description</div>
+            <div id="newDescHelp" class="form-text">Blog Description</div>
           </div>
           <div class="mb-3">
             <label class="form-label" for="newImage">Upload Image:</label>
@@ -186,17 +169,15 @@
               name="image"
               accept="image/*"
             />
-            <div id="newImageHelp" class="form-text">
-              Upload a category image
-            </div>
+            <div id="newImageHelp" class="form-text">Upload a blog image</div>
           </div>
           <div class="modal-footer">
             <button
               type="button"
               class="btn btn-primary"
-              onclick="addNewCategory()"
+              onclick="addNewblog()"
             >
-              Add Category
+              Add blog
             </button>
           </div>
         </form>
@@ -206,11 +187,11 @@
 </div>
 
 <script>
-  // JavaScript function to handle category deletion
-  function deleteCategory(categoryId) {
-    // You can use JavaScript to make an AJAX request to the server to delete the category.
+  // JavaScript function to handle blog deletion
+  function deleteblog(blogId) {
+    // You can use JavaScript to make an AJAX request to the server to delete the blog.
     // For example, using the Fetch API:
-    fetch(`/api/deleteCategory/${categoryId}`, {
+    fetch(`/api/deleteblog/${blogId}`, {
       method: "DELETE",
     })
       .then((response) => {
@@ -218,12 +199,10 @@
       })
       .then((data) => {
         if (data.message) {
-          // Category deleted successfully, you can update the UI as needed
+          // blog deleted successfully, you can update the UI as needed
           // For example, remove the row from the table
           alert(data.message);
-          const row = document.querySelector(
-            `tr[data-category-id="${categoryId}"]`
-          );
+          const row = document.querySelector(`tr[data-blog-id="${blogId}"]`);
           if (row) {
             row.remove();
           }
@@ -231,25 +210,25 @@
           window.location.reload();
         } else {
           // Handle error case
-          console.error("Category deletion failed");
-          alert("Category deletion failed"); // Display an error message
+          console.error("blog deletion failed");
+          alert("blog deletion failed"); // Display an error message
         }
       })
       .catch((error) => {
         console.error("Error:", error);
-        alert("An error occurred while deleting the category");
+        alert("An error occurred while deleting the blog");
       });
   }
 
   // Function to open the modal for editing
-  function openModal(categoryId, categoryName, categoryDescription) {
+  function openModal(blogId, blogName, blogDescription) {
     const editNameInput = document.getElementById("editName");
     const editDescription = document.getElementById("editDescription");
     const catId = document.getElementById("catId");
-    // Populate the input fields with the current category data
-    editNameInput.value = categoryName;
-    editDescription.value = categoryDescription;
-    catId.value = categoryId;
+    // Populate the input fields with the current blog data
+    editNameInput.value = blogName;
+    editDescription.value = blogDescription;
+    catId.value = blogId;
 
     // Show the modal
     const modal = document.getElementById("editModal");
@@ -262,19 +241,21 @@
     modal.style.display = "none";
   }
 
-  // Function to save the edited category
-  function saveCategory() {
+  // Function to save the edited blog
+  function saveblog() {
+    console.log("saveblog function is called");
+
     const editNameInput = document.getElementById("editName");
     const editDescriptionInput = document.getElementById("editDescription");
     const editImageInput = document.getElementById("editImage");
-    const categoryId = document.getElementById("catId").value;
+    const blogId = document.getElementById("catId").value;
 
     const editedName = editNameInput.value;
     const editedDescription = editDescriptionInput.value;
 
     // Create a FormData object to handle file uploads
     const formData = {
-      categoryId: categoryId,
+      blogId: blogId,
       name: editedName,
       description: editedDescription,
     };
@@ -286,7 +267,7 @@
       reader.readAsDataURL(imageFile);
       reader.onloadend = () => {
         formData.image = reader.result;
-        // Now, you can send the newCategoryData as JSON
+        // Now, you can send the newblogData as JSON
         postEditData(formData);
       };
     } else {
@@ -297,7 +278,7 @@
   function postEditData(requestData) {
     // Convert the FormData to an object for JSON data
 
-    const apiUrl = "/api/updateCategory";
+    const apiUrl = "/api/updateblog";
     fetch(apiUrl, {
       method: "POST",
       headers: {
@@ -307,44 +288,40 @@
     })
       .then((response) => {
         if (response.ok) {
-          // Category updated successfully, you can update the UI as needed
+          // blog updated successfully, you can update the UI as needed
           closeModal();
-          alert("Category updated successfully");
+          alert("blog updated successfully");
           window.location.reload();
         } else {
           // Handle error case
-          console.error("Category update failed");
-          alert("Category update failed"); // Display an error message
+          console.error("blog update failed");
+          alert("blog update failed"); // Display an error message
         }
       })
       .catch((error) => {
         console.error("Error:", error);
-        alert("An error occurred while updating the category");
+        alert("An error occurred while updating the blog");
       });
   }
-  // Function to open the "New Category" modal
-  function openNewCategoryModal() {
-    const modal = document.getElementById("newCategoryModal");
+
+  function openNewBlogModal() {
+    const modal = document.getElementById("newblogModal");
     modal.style.display = "block";
   }
 
-  // Function to close the "New Category" modal
-  function closeNewCategoryModal() {
-    const modal = document.getElementById("newCategoryModal");
+  function closeNewblogModal() {
+    const modal = document.getElementById("newblogModal");
     modal.style.display = "none";
   }
 
-  // Function to add a new category
-  function addNewCategory() {
-    const newNameInput = document.getElementById("newName");
+  function addNewblog() {
+    const newNameInput = document.getElementById("blogtitle");
     const newDescriptionInput = document.getElementById("newDescription");
     const newImageInput = document.getElementById("newImage");
 
     const newName = newNameInput.value;
     const newDescription = newDescriptionInput.value;
-
-    // Create an object with the new category data
-    const newCategoryData = {
+    const newblogData = {
       name: newName,
       description: newDescription,
     };
@@ -356,40 +333,40 @@
       const reader = new FileReader();
       reader.readAsDataURL(imageFile);
       reader.onloadend = () => {
-        newCategoryData.image = reader.result;
-        // Now, you can send the newCategoryData as JSON
-        sendNewCategoryData(newCategoryData);
+        newblogData.image = reader.result;
+        // Now, you can send the newblogData as JSON
+        sendNewblogData(newblogData);
       };
     } else {
       // If no image was selected, send the data without the image
-      sendNewCategoryData(newCategoryData);
+      sendNewblogData(newblogData);
     }
   }
-  function sendNewCategoryData(newCategoryData) {
-    const apiUrl = "/api/addcategories"; // Replace with the actual API endpoint for adding categories
+  function sendNewblogData(newblogData) {
+    const apiUrl = "/api/addblogs"; // Replace with the actual API endpoint for adding blogs
 
     fetch(apiUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json", // Specify that you're sending JSON data
       },
-      body: JSON.stringify(newCategoryData), // Convert the object to JSON
+      body: JSON.stringify(newblogData), // Convert the object to JSON
     })
       .then((response) => {
         if (response.ok) {
-          // Category added successfully, you can update the UI as needed
-          closeNewCategoryModal();
-          alert("Category addition Successfully");
+          // blog added successfully, you can update the UI as needed
+          closeNewblogModal();
+          alert("blog addition Successfully");
           window.location.reload();
         } else {
           // Handle error case
-          console.error("Category addition failed");
-          alert("Category addition failed"); // Display an error message
+          console.error("blog addition failed");
+          alert("blog addition failed"); // Display an error message
         }
       })
       .catch((error) => {
         console.error("Error:", error);
-        alert("An error occurred while adding the category");
+        alert("An error occurred while adding the blog");
       });
   }
 </script>
