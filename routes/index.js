@@ -11,7 +11,8 @@ const paymentRoutes = require("./payments");
 // #products api
 router.get("/products", productsController.getAllProducts);
 router.get("/productsbyId/:productId", productsController.getProduct);
-router.post("/addproducts", productsController.addProduct);
+router.post("/addproduct", productsController.addProduct);
+router.post("/updateProduct", productsController.updateProduct);
 router.get("/generate-test-products", productsController.generateTestProducts);
 // router.get('/copy', copyImage);
 

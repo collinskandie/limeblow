@@ -1,4 +1,5 @@
 const Product = require("../models/Product");
+const { saveBase64Image } = require("./savefile");
 
 // Function to get all products
 async function getAllProducts(req, res) {
@@ -30,11 +31,9 @@ async function addProduct(req, res) {
   try {
     console.log("Received request body:", req.body);
 
-    // const name =req.body.name;
     const {
       name,
       description,
-      imagesurl,
       cost,
       price,
       quantity,
@@ -42,14 +41,31 @@ async function addProduct(req, res) {
       weight,
       color,
       availability,
-      updatedby,
     } = req.body;
+    const updatedby = "Admin";
 
-    // Create a new product using the Product model
+    // Initialize an array to store image filenames
+    const imageFilenames = [];
+
+    // Check if images were uploaded
+    if (req.body.images) {
+      // Loop through the uploaded images and save each one
+      for (const image of req.body.images) {
+        // Read the image data as a base64-encoded string
+        const imageData = image;
+
+        // Use your saveBase64Image function to save the image and get the filename
+        const newImageName = await saveBase64Image(imageData);
+
+        // Push the filename to the array
+        imageFilenames.push(newImageName);
+      }
+    }
+
+    // Create a new product using the Product model and include the image filenames
     const newProduct = await Product.create({
       name,
       description,
-      imagesurl,
       cost,
       price,
       quantity,
@@ -57,6 +73,7 @@ async function addProduct(req, res) {
       weight,
       color,
       availability,
+      imagesurl: imageFilenames, // Include the image filenames array in the product data
       updatedby,
     });
 
@@ -65,6 +82,74 @@ async function addProduct(req, res) {
       message: "Product added successfully",
       product: newProduct,
     });
+  } catch (error) {
+    console.error("Error adding product:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error adding product",
+      error: error.message,
+    });
+  }
+}
+async function updateProduct(req, res) {
+  try {
+    console.log("Received request body:", req.body);
+
+    const {
+      ProductId,
+      name,
+      description,
+      cost,
+      price,
+      quantity,
+      size,
+      weight,
+      color,
+      availability,
+    } = req.body;
+    const updatedby = "Admin";
+    const imageFilenames = [];
+
+    const originalProduct = await Product.findByPk(ProductId);
+    if (req.body.images) {
+      for (const image of req.body.images) {
+        const imageData = image;
+        const newImageName = await saveBase64Image(imageData);
+        imageFilenames.push(newImageName);
+      }
+    } else {
+      const productImages = originalProduct.imagesurl;
+      for (const dbimage of productImages) {
+        imageFilenames.push(dbimage);
+      }
+      // imageFilenames = originalProduct.imagesurl;
+    }
+
+    let updatedFields = {
+      name: name,
+      description: description,
+      cost: cost,
+      price: price,
+      quanntity: quantity,
+      size: size,
+      weight: weight,
+      color: color,
+      availability: availability,
+      imagesurl: imageFilenames, // Include the image filenames array in the product data
+      updatedby: updatedby,
+    };
+
+    Product.update(updatedFields, { where: { productid: ProductId } })
+      .then(() => {
+        console.log("Product updated successfully");
+        return res
+          .status(200)
+          .json({ message: "Product updated successfully" });
+      })
+      .catch((error) => {
+        console.error("Error updating Product model:", error);
+        return res.status(500).json({ error: "Error updating Product" });
+      });
   } catch (error) {
     console.error("Error adding product:", error);
     return res.status(500).json({
@@ -118,4 +203,5 @@ module.exports = {
   addProduct,
   generateTestProducts,
   getProduct,
+  updateProduct,
 };

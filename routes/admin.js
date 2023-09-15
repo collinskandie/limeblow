@@ -55,10 +55,14 @@ router.get("/subcategories", async (req, res) => {
 router.get("/list-products", async (req, res) => {
   try {
     const productlist = await Product.findAll();
+    const subcategories = await Subcategory.findAll();
+    const categories = await Category.findAll();
     res.render("admin/productlist", {
       title: "System Products",
       layout: "layouts/admin_layout",
       productlist,
+      subcategories,
+      categories,
     });
   } catch (error) {
     console.error(error);

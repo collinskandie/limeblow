@@ -12,7 +12,7 @@ async function getAllCategories(req, res) {
     res.status(500).json({ error: "Error fetching products" });
   }
 }
-
+ 
 async function AddCategories(req, res) {
   try {
     let createdBy = "Admin";
@@ -156,7 +156,7 @@ const editsubCategory = async (req, res) => {
 
     // Check if an image is provided in the request
     if (image) {
-      const newImageName = await saveBase64Image(image);
+      const newImageName = await saveBase64Image(image); 
       updatedFields.imageUrl = newImageName;
     } else {
       // If no new image is provided, retain the original image name
