@@ -12,7 +12,8 @@ const sequelize = new Sequelize(
   }
 );
 
-async function runMigrations() {
+async function runMigrations(req, res) {
+  // Pass res as a parameter
   try {
     const umzug = new Umzug({
       storage: "sequelize",
@@ -32,7 +33,7 @@ async function runMigrations() {
       .json({ success: true, message: "Migrations executed successfully" });
   } catch (error) {
     console.error("Error running migrations:", error);
-    res
+    return res
       .status(500)
       .json({ success: false, message: "Error running migrations" });
   } finally {

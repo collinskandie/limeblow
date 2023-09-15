@@ -59,7 +59,7 @@ app.use("/api", apiRouter);
 app.use("/admin", useAdmin);
 app.post("/login", usersController.login);
 const runMigration = require("./controllers/migrate");
-const Blog = require("./models/blog");
+const Blog = require("./models/blog"); 
 app.get("/run-migrations", runMigration.runMigrations);
 
 // Define your other routes here
@@ -72,12 +72,17 @@ app.get("/", async (req, res) => {
       order: [["createdAt", "DESC"]],
       limit: 3,
     });
+    const blogs = await Blog.findAll({
+      order: [["createdAt", "DESC"]],
+      limit: 3,
+    });
 
     res.render("index", {
       title: "Home",
       layout: "layouts/master",
       categories,
       products,
+      blogs,
       latestproducts,
     });
   } catch (error) {
@@ -87,6 +92,7 @@ app.get("/", async (req, res) => {
       layout: "layouts/master",
       categories: [],
       product: [],
+      blogs: [],
       latestproducts: [],
     });
   }
@@ -99,11 +105,16 @@ app.get("/index", async (req, res) => {
       order: [["createdAt", "DESC"]],
       limit: 3,
     });
+    const blogs = await Blog.findAll({
+      order: [["createdAt", "DESC"]],
+      limit: 3,
+    });
     res.render("index", {
       title: "Home",
       layout: "layouts/master",
       categories,
       products,
+      blogs,
       latestproducts,
     });
   } catch (error) {
@@ -113,6 +124,7 @@ app.get("/index", async (req, res) => {
       layout: "layouts/master",
       categories: [],
       product: [],
+      blogs: [],
       latestproducts: [],
     });
   }
