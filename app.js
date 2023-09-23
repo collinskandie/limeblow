@@ -20,7 +20,7 @@ app.use(
     secret: process.env.SECRETE, // Replace with your own secret key
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }, // Adjust settings as needed
+    cookie: { secure: false }, // Adjust settings as needed 
   })
 );
 // Middleware to log requests

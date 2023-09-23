@@ -58,20 +58,7 @@
             <td>
               <button
                 class="btn btn-primary"
-                onclick="openModal(
-                  '<%= Product.productid %>', 
-                  '<%= Product.name %>',
-                  '<%= Product.description %>',
-                  '<%= Product.cost %>',
-                  '<%= Product.price %>',
-                  '<%= Product.category %>',
-                  '<%= Product.quantity %>',
-                  '<%= Product.subCategory %>',
-                  '<%= Product.weight %>',
-                  '<%= Product.color %>',
-                  '<%= Product.size %>',
-                  '<%= Product.availability %>')"
-              >
+                onclick="openModal('<%= Product.productid %>')">
                 Edit
               </button>
 
@@ -85,7 +72,7 @@
               </button>
             </td>
           </tr>
-          <% }); %>
+          <% }); %> 
         </tbody>
       </table>
       <%- include('footer.ejs') %>

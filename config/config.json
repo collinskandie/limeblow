@@ -1,8 +1,8 @@
 {
   "development": {
-    "username": "limebowg_collo",
-    "password": "Collin@Admin",
-    "database": "limebowg_limebow",
+    "username": "root",
+    "password": "",
+    "database": "limebow",
     "host": "localhost",
     "dialect": "mysql"
   },
@@ -14,10 +14,13 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "limebowg_collo",
+    "username": "root",
     "password": "Collin@Admin",
-    "database": "limebowg_limebow",
+    "database": "limebow",
     "host": "localhost",
     "dialect": "mysql"
   }
 }
+
+
+
