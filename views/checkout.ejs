@@ -29,19 +29,40 @@
               <div class="checkout__order__total">
                 Total <span>KES 00.00</span>
               </div>
+              Kindly pay via mpesa till then paste the mpesa confirmation code
+              below
+              <hr />
+              Till : <strong>9698167</strong>
+              <BR />
+              Name : <strong>LIME BOW GIFTS</strong>
+              <hr />
               <div class="checkout__input__checkbox">
                 <label for="payment1">
                   Mpesa
-                  <input type="checkbox" id="payment1" value="mpesa" name="payment_method" />
+                  <input
+                    type="text"
+                    id="payment1"
+                    value="mpesa"
+                    name="payment_method"
+                  />
                   <span class="checkmark"></span>
                 </label>
-              </div>
-              <div class="checkout__input__checkbox">
-                <label for="payment2">
-                  Credit/Debit Card
-                  <input type="checkbox" id="payment2" value="card" name="payment_method" />
-                  <span class="checkmark"></span>
-                </label>
+                <div class="checkout__input">
+                  <p>Mpesa Confirmation<span>*</span></p>
+                  <input
+                    type="text"
+                    name="mpesa_confirmation"
+                    placeholder="XXXXXXXXXX"
+                    required
+                  />
+                  <p>Mpesa Confirmation<span>*</span></p>
+                  <input
+                    type="text"
+                    name="mpesa_confirmation"
+                    placeholder="XXXXXXXXXX"
+                    required
+                  />
+                </div>
               </div>
               <button type="submit" class="site-btn">PLACE ORDER</button>
             </div>
@@ -50,27 +71,81 @@
       </form>
     </div>
   </div>
+  <div
+    class="toast"
+    id="successToast"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+    data-autohide="true"
+    data-delay="3000"
+  >
+    <div class="toast-header">
+      <strong class="mr-auto">Success</strong>
+      <button
+        type="button"
+        class="ml-2 mb-1 close"
+        data-dismiss="toast"
+        aria-label="Close"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="toast-body">
+      <!-- Toast message will be displayed here -->
+    </div>
+  </div>
 </section>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
   $(document).ready(function () {
     $("form").submit(function (event) {
       event.preventDefault(); // Prevent the default form submission
-      // Serialize the form data
-      var formData = $(this).serialize();
 
-      // Make an AJAX POST request to the API
+      // Serialize the form data
+      var formData = {};
+      $(this)
+        .find("input, select")
+        .each(function () {
+          formData[$(this).attr("name")] = $(this).val();
+        });
+
+      const storedCartItems =
+        JSON.parse(localStorage.getItem("cartItems")) || [];
+      const paymentData = {
+        cartItems: storedCartItems, // Assuming storedCartItems contains the cart items
+        total: totalPrice.toFixed(2), // Format total as a string with two decimal places
+      };
+
+      // Merge the form data and payment data into one object
+      const requestData = {
+        ...formData,
+        ...paymentData,
+      };
+
       $.ajax({
         type: "POST",
-        url: "/api/users/newaddress",
-        data: formData,
+        url: "/api/payments/confirmation",
+        contentType: "application/json", // Set the content type to JSON
+        data: JSON.stringify(requestData),
         success: function (response) {
           // Handle the success response here
-          console.log("Success:", response);
+          //console.log("Success:", response);
+          const userId = response.user;
+          console.log(userId);
 
-          // Display a Bootstrap toast notification with a button
-          alert(response.message);
-          window.location.href = "/payments";         
+          // Display the toast message
+          var toastMessage = response.success; // Replace with the actual success message
+          var successToast = document.getElementById("successToast");
+          var toastBody = successToast.querySelector(".toast-body");
+          toastBody.textContent = toastMessage;
+          var toast = new bootstrap.Toast(successToast);
+          toast.show();
+          alert(response.success);
+          localStorage.removeItem("cartItems");
+          window.location.href = `/success/${userId}`;
+
+          // You can optionally redirect the user or perform other actions after clearing the cartItems
         },
         error: function (error) {
           // Handle the error response here

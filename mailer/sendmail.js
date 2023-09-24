@@ -1,6 +1,7 @@
 // const mongoose = require('mongoose');
 const nodemailer = require("nodemailer");
 var fs = require("fs");
+const ejs = require("ejs");
 const Handlebars = require("handlebars");
 let transporter;
 let img = "../public/img/logo.png";
@@ -14,12 +15,12 @@ var readHTMLFile = function (path, callback) {
   });
 };
 transporter = nodemailer.createTransport({
-  host: process.env.smtphost,
-  port: parseInt(process.env.smtpport),
-  secure: parseInt(process.env.secure),
+  host: "mail.limebowgifts.com",
+  port: 465,
+  secure: true,
   auth: {
-    user: process.env.service_mail,
-    pass: process.env.service_password,
+    user: "sales@limebowgifts.com",
+    pass: "%$Iz@u;AMjx,",
   },
   // tls: {
   //   rejectUnauthorized: false, // Bypass certificate validation (not recommended for production)
@@ -87,8 +88,39 @@ const sendNewMessageMail = function (name, email, message) {
     });
   });
 };
+const sendInvoice = function (items, email, total, invoiceNumber, invoiceDate) {
+  fs.readFile(__dirname + "/invoice.ejs", "utf-8", function (err, data) {
+    if (err) {
+      console.log("Error reading file", err);
+      return;
+    }
+
+    // Compile the EJS template with data
+    const renderedHtml = ejs.render(data, {
+      invoiceNumber: invoiceNumber,
+      items: items,
+      invoiceTotal: total,
+      date: invoiceDate,
+    });
+    let mailOptions = {
+      from: "Limebow Sales <sales@limebowgifts.com>",
+      to: email,
+      subject: `Receipt number. ${invoiceNumber}`,
+      html: renderedHtml,
+      text: "Success",
+    };
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("messsage sent: %s\n", info.response);
+      }
+    });
+  });
+};
 
 module.exports = {
   sendActivationMail,
   sendNewMessageMail,
+  sendInvoice,
 };

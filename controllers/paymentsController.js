@@ -4,6 +4,8 @@ const Sale = require("../models/Sale");
 const axios = require("axios");
 const { saveBase64Image } = require("./savefile");
 const Dispatch = require("../models/dispatch");
+const { billingAdress } = require("./usersController");
+const { sendInvoice } = require("../mailer/sendmail");
 // Define these variables at the module level
 let mpesa_no = "";
 let new_amount = 0;
@@ -68,6 +70,70 @@ async function newMpesa(req, res) {
     res.status(500).json(error.data);
   }
 }
+async function savePayment(req, res) {
+  try {
+    // console.log(req.body.cartItems);
+    console.log(req.body);
+    const user = generateInvoiceNumber();
+
+    const {
+      first_name,
+      last_name, 
+      county,
+      address,
+      apartment,
+      town_city,
+      street,
+      post_code,
+      phone,
+      email,
+      payment_method,
+      mpesa_confirmation,
+      cartItems,
+      total,
+    } = req.body;
+    const items = cartItems;
+    const new_amount = total;
+
+    const billing_address = await billingAdress(
+      first_name,
+      last_name,
+      county,
+      address,
+      apartment,
+      town_city,
+      post_code,
+      phone,
+      email,
+      user,
+      payment_method
+    );
+    console.log(billing_address);
+
+    const invoiceNumber = await generateInvoiceNumber();
+    createSale(user, items, invoiceNumber, new_amount);
+    createReceiptItems(items, invoiceNumber, mpesa_confirmation);
+    const payment_status = savePaymentDetails(
+      mpesa_confirmation,
+      new_amount,
+      phone,
+      invoiceNumber,
+      payment_method
+    );
+    const invoiceDate = Date.now();
+    sendInvoice(items, email, total, invoiceNumber, invoiceDate);
+    res.status(201).json({
+      success:
+        "Payment successfully recieved, we are going to review and call you back",
+      payment_status,
+      user,
+    });
+  } catch (error) {
+    console.error(error);
+    console.error(error.data);
+    res.status(500).json(error.data);
+  }
+}
 async function mpesaCallBack(req, res) {
   const callbackdata = req.body;
   if (!callbackdata.Body.stkCallback.CallbackMetadata) {
@@ -85,7 +151,6 @@ async function mpesaCallBack(req, res) {
     const invoiceNumber = generateInvoiceNumber();
     createSale(user, items, invoiceNumber, new_amount);
 
-    // create listItem on table
     createReceiptItems(items, invoiceNumber);
 
     const body = callbackdata.Body.stkCallback.CallbackMetadata;
@@ -101,27 +166,15 @@ async function mpesaCallBack(req, res) {
     // invoiceNumber = "12321";
     paymentMethod = "mpesa";
 
-    const payment = new Payments();
-    payment.referenceNumber = trans_id;
-    payment.invoiceTotal = amount;
-    payment.accountNumber = phone;
-    payment.invoiceNumber = invoiceNumber;
-    payment.paymentMethod = paymentMethod;
-
-    payment
-      .save()
-      .then((data) => {
-        console.log(data);
-        res.json("ok");
-        return {
-          status: "success",
-          message: `Payment successful, ${trans_id}`,
-          callbackBody: callbackdata.Body.stkCallback,
-        };
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    //here
+    const savePayment_status = await savePaymentDetails(
+      trans_id,
+      amount,
+      phone,
+      invoiceNumber,
+      paymentMethod
+    );
+    return savePayment_status;
   }
 }
 async function createReceiptItems(items, invoiceNumber) {
@@ -185,6 +238,7 @@ function generateInvoiceNumber() {
 async function newCard(req, res) {
   try {
     console.log(req.body);
+
     return res.json(201);
   } catch (error) {
     console.error(error);
@@ -251,6 +305,42 @@ async function getDispatch(req, res) {
     res.status(500).json({ error: "Internal server error" });
   }
 }
+async function savePaymentDetails(
+  trans_id,
+  amount,
+  phone,
+  invoiceNumber,
+  paymentMethod
+) {
+  try {
+    const payment = new Payments();
+    payment.referenceNumber = trans_id;
+    payment.invoiceTotal = amount;
+    payment.accountNumber = phone;
+    payment.invoiceNumber = invoiceNumber;
+    payment.paymentMethod = paymentMethod;
+
+    payment
+      .save()
+      .then((data) => {
+        console.log(data);
+        return {
+          status: "success",
+          message: `Payment successful, ${trans_id}`,
+          payment,
+        };
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  } catch (error) {
+    console.error(error);
+    return {
+      error: "Internal server error",
+      status: 500,
+    };
+  }
+}
 
 module.exports = {
   newMpesa,
@@ -258,4 +348,5 @@ module.exports = {
   mpesaCallBack,
   saveDispatch,
   getDispatch,
+  savePayment,
 };

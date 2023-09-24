@@ -183,7 +183,7 @@ async function newMessage(name, email, message) {
       email: email,
       message: message,
     });
-   
+
     if (!postMessage) {
       console.log("Failed");
       throw new Error("Failed to save message"); // Throw an error if the message couldn't be saved
@@ -200,4 +200,5 @@ module.exports = {
   login,
   addAddress,
   newMessage,
+  billingAdress,
 };

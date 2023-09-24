@@ -20,7 +20,7 @@ app.use(
     secret: process.env.SECRETE, // Replace with your own secret key
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }, // Adjust settings as needed 
+    cookie: { secure: false }, // Adjust settings as needed
   })
 );
 // Middleware to log requests
@@ -42,6 +42,9 @@ app.use("/admin", useAdmin);
 app.post("/login", usersController.login);
 const runMigration = require("./controllers/migrate");
 const Blog = require("./models/blog");
+const Payments = require("./models/Payment");
+const Sale = require("./models/Sale");
+const ReceiptItem = require("./models/ReceiptItem");
 app.get("/run-migrations", runMigration.runMigrations);
 
 // Define your other routes here
@@ -140,7 +143,7 @@ app.post("/contact", async (req, res) => {
       layout: "layouts/master",
       categories,
       saveMessage,
-      sucsess: "Message saved",
+      success: "Message saved",
     });
   } catch (error) {
     console.error(error);
@@ -202,6 +205,56 @@ app.get("/payments", async (req, res) => {
       layout: "layouts/master",
       categories,
       userSessionExists,
+    });
+  } catch (error) {
+    console.error(error);
+    res.render("checkout", {
+      title: "Checkout",
+      layout: "layouts/master",
+      categories: [],
+    });
+  }
+});
+app.get("/success/:userid", async (req, res) => {
+  try {
+    const categories = await Category.findAll();
+    const userid = req.params.userid;
+
+    const salesDetails = await Sale.findOne({ 
+      where: {
+        user: userid,
+      },
+      order: [["createdAt", "DESC"]],
+    });
+    // console.log(salesDetails);
+
+    const invoiceNumber = salesDetails.invoiceNumber;
+
+    const paymentDetail = await Payments.findOne({
+      where: {
+        invoiceNumber: invoiceNumber,
+      },
+    });
+    const query = `SELECT ri.*, p.name
+    FROM ReceiptItems AS ri
+    INNER JOIN Products AS p ON ri.productId = p.productid
+    WHERE ri.invoiceNumber = :invoiceNumber`;
+
+    const salesItems = await sequelize.query(query, {
+      replacements: { invoiceNumber }, // Bind the invoiceNumber parameter
+      type: sequelize.QueryTypes.SELECT, // Specify that it's a SELECT query
+    });
+
+    // console.log({ salesDetails, paymentDetail, salesItems });
+
+    // const userSessionExists = req.session && req.session.user;
+    res.render("success", {
+      title: "Success",
+      layout: "layouts/master",
+      categories,
+      salesDetails,
+      paymentDetail,
+      salesItems,
     });
   } catch (error) {
     console.error(error);
@@ -386,7 +439,7 @@ app.use((req, res) => {
   res.status(404).render("404", {
     title: "404",
     layout: "layouts/master",
-  }); // Render the '404.ejs' template
+  });
 });
 
 // Start the server

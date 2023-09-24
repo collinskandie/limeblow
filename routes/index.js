@@ -39,6 +39,7 @@ router.post("/addsubcategories", categoriesController.AddsubCategories);
 //manage users
 router.use("/users", usersRouter);
 router.use("/payments", paymentRoutes);
+router.use("/savePayment", paymentRoutes);
 
 // blog routes
 router.post("/addblogs", blogController.addBlog);

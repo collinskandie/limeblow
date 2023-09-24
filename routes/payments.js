@@ -6,3 +6,5 @@ router.post("/mpesa", generateToken, paymentsController.newMpesa);
 router.post("/card", paymentsController.newCard);
 router.post("/callback", paymentsController.mpesaCallBack);
 module.exports = router; // Export the router object
+
+router.post('/confirmation',paymentsController.savePayment); // save payemnt as a transaction
