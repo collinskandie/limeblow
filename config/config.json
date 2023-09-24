@@ -14,13 +14,10 @@
     "dialect": "mysql"
   },
   "production": {
-    "username": "root",
+    "username": "limebowg_collo",
     "password": "Collin@Admin",
-    "database": "limebow",
+    "database": "limebowg_limebow",
     "host": "localhost",
     "dialect": "mysql"
   }
 }
-
-
-

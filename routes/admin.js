@@ -116,4 +116,15 @@ router.get("/delivered", async (req, res) => {
     res.status(404).json(error);
   }
 });
+router.get("/logout", async (req, res) => {
+  try {   
+    res.render("admin/logout", {
+      title: "Logout",
+      layout: "layouts/admin_layout",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(404).json(error);
+  }
+});
 module.exports = router;

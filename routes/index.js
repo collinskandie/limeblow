@@ -5,10 +5,14 @@ const productsController = require("../controllers/productsController");
 const categoriesController = require("../controllers/categoriesController");
 const blogController = require("../controllers/blogController");
 const paymentsController = require("../controllers/paymentsController");
-
-const authenticateToken = require("../middleware/authenticateToken"); // use this for api routes that needs to be verified for auth
+const usersController = require("../controllers/usersController");
 const usersRouter = require("./users");
 const paymentRoutes = require("./payments");
+const { validateToken } = require("../middleware/userTokenValidator");
+
+// Define this route after initializing your Express app
+router.get("/verifyToken", validateToken, usersController.verifyToken);
+
 // #products api
 router.get("/products", productsController.getAllProducts);
 router.get("/productsbyId/:productId", productsController.getProduct);
@@ -48,4 +52,6 @@ router.delete("/deleteblog/:blogId", blogController.deleteBlog);
 
 router.post("/dispatch", paymentsController.saveDispatch);
 router.get("/getdispatch/:invoiceId", paymentsController.getDispatch);
+router.post("/addAdmin", usersController.addAdmin);
+router.post("/admin/login", usersController.adminLogin);
 module.exports = router;

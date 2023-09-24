@@ -2,11 +2,14 @@ const Customer = require("../models/Customer");
 const crypto = require("crypto");
 const BillingDetails = require("../models/BillingDetails");
 const Contacts = require("../models/Contactform");
+const bcrypt = require("bcryptjs");
+
 const {
   sendActivationMail,
   sendNewMessageMail,
 } = require("../mailer/sendmail");
 const jwt = require("jsonwebtoken");
+const AdminUser = require("../models/AdminUser");
 
 async function AddUsers(req, res) {
   try {
@@ -195,10 +198,73 @@ async function newMessage(name, email, message) {
     throw error; // Re-throw the error to be caught in the route handler
   }
 }
+async function addAdmin(req, res) {
+  try {
+    const { username, email, password } = req.body;
+
+    // Hash the password
+    const saltRounds = 10; // Number of salt rounds (adjust as needed)
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const newAdmin = await AdminUser.create({
+      username,
+      email,
+      password: hashedPassword,
+    });
+    if (!newAdmin) {
+      console.log("Errror creating admin user");
+    }
+    console.log(newAdmin.username);
+    res.status(201).json({
+      newAdmin,
+      message: "Admin created successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error addding admin" });
+  }
+}
+async function adminLogin(req, res) {
+  const { email, password } = req.body;
+  try {
+    const admin = await AdminUser.findOne({ where: { email: email } });
+    if (!admin) {
+      return res
+        .status(401)
+        .json({ message: "User not found", success: false });
+    }
+    // Compare the provided password with the hashed password in the database
+    const isPasswordValid = await bcrypt.compare(password, admin.password);
+
+    if (!isPasswordValid) {
+      return res
+        .status(401)
+        .json({ message: "Authentication failed", success: false });
+    }
+    const secretKey = process.env.SECRETE;
+    const token = jwt.sign({ userId: admin._id }, secretKey, {
+      expiresIn: "1h",
+    });
+    res.status(201).json({
+      success: true,
+      message: "Successfully logged in",
+      token,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+}
+async function verifyToken(req, res) {
+  console.log(req);
+  res.status(200).json({ message: "Token is valid" });
+}
 module.exports = {
   AddUsers,
   login,
   addAddress,
   newMessage,
   billingAdress,
+  addAdmin,
+  adminLogin,
+  verifyToken,
 };
