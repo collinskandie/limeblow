@@ -1,8 +1,6 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const expressLayouts = require("express-ejs-layouts");
-const session = require("express-session");
-
 const sequelize = require("./config/db");
 const Category = require("./models/Category");
 require("dotenv").config();
@@ -15,14 +13,7 @@ const Product = require("./models/Product");
 
 //
 const port = process.env.PORT || 3000;
-app.use(
-  session({
-    secret: process.env.SECRETE, // Replace with your own secret key
-    resave: false,
-    saveUninitialized: true,
-    cookie: { secure: false }, // Adjust settings as needed
-  })
-);
+// 
 // Middleware to log requests
 app.use((req, res, next) => {
   console.log(`Received ${req.method} request for ${req.originalUrl}`);

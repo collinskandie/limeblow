@@ -7,8 +7,8 @@ function authenticateToken(req, res, next) {
   if (!token) {
     return next(); // No token, continue without setting req.user
   }
-
-  jwt.verify(token, "your-secret-key", (err, user) => {
+ const secrete_key = process.env.SECRETE;
+  jwt.verify(token, secrete_key, (err, user) => {
     if (err) {
       return next(); // Invalid token, continue without setting req.user
     }
@@ -21,10 +21,11 @@ const generateToken = async (req, res, next) => {
   const secrete = process.env.MPESA_CONSUMER_SECRETE;
   const consumer_key = process.env.MPESA_CONSUMER_KEY;
   const auth = new Buffer.from(`${consumer_key}:${secrete}`).toString("base64");
+  console.log(auth);
 
   await axios
     .get(
-      "https://sandbox.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials",
+      "https://api.safaricom.co.ke/oauth/v1/generate?grant_type=client_credentials",
       {
         headers: {
           authorization: `Basic ${auth}`,

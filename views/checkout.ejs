@@ -1,4 +1,3 @@
-<!-- <body> -->
 <%- include('hero.ejs') %>
 <section class="checkout spad">
   <div class="container">
@@ -12,7 +11,7 @@
     </div>
     <div class="checkout__form">
       <h4>Billing Details</h4>
-      <form method="POST">
+      <form method="POST" id="orderForm">
         <div class="row">
           <% console.log(userSessionExists); %> <% if (!userSessionExists) { %>
           <%- include('billingform.ejs') %> <% } %> <% if (userSessionExists) {
@@ -32,9 +31,8 @@
               Kindly pay via mpesa till then paste the mpesa confirmation code
               below
               <hr />
-              Till : <strong>9698167</strong>
-              <BR />
-              Name : <strong>LIME BOW GIFTS</strong>
+              Till: <strong>9698167</strong><br />
+              Name: <strong>LIME BOW GIFTS</strong>
               <hr />
               <div class="checkout__input__checkbox">
                 <label for="payment1">
@@ -48,23 +46,35 @@
                   <span class="checkmark"></span>
                 </label>
                 <div class="checkout__input">
-                  <p>Mpesa Confirmation<span>*</span></p>
+                  <p>Mpesa number<span>*</span></p>
                   <input
                     type="text"
-                    name="mpesa_confirmation"
-                    placeholder="XXXXXXXXXX"
+                    name="mpesa_number"
+                    id="mpesaNumberInput"
+                    placeholder="0722000000"
                     required
                   />
-                  <p>Mpesa Confirmation<span>*</span></p>
+                  <button type="button" id="sendMpesaDataBtn" class="site-btn">
+                    Send Mpesa Data
+                  </button>
+
+                  <p hidden id="mpesaConfirmationTxt">
+                    Mpesa Confirmation<span>*</span>
+                  </p>
                   <input
                     type="text"
                     name="mpesa_confirmation"
+                    id="mpesaConfirmationInput"
                     placeholder="XXXXXXXXXX"
                     required
+                    readonly
+                    hidden
                   />
                 </div>
               </div>
-              <button type="submit" class="site-btn">PLACE ORDER</button>
+              <button type="submit" id="placeOrderBtn" class="site-btn" hidden>
+                PLACE ORDER
+              </button>
             </div>
           </div>
         </div>
@@ -97,8 +107,77 @@
   </div>
 </section>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
   $(document).ready(function () {
+    $("#sendMpesaDataBtn").click(function () {
+      // Get the Mpesa number and cart total from the form
+      const mpesaNumber = $("#mpesaNumberInput").val();
+      const storedCartItems =
+        JSON.parse(localStorage.getItem("cartItems")) || [];
+      let totalPrice = 0;
+
+      storedCartItems.forEach((item) => {
+        totalPrice += item.price * item.quantity;
+      });
+      const cartTotal = totalPrice.toFixed(2);
+
+      // Prepare the data to send to the server
+      const requestData = {
+        mpesaNumber,
+        cartTotal,
+      };
+
+      // Send an AJAX request to the server
+      $.ajax({
+        type: "POST",
+        url: "/api/payments/mpesa", // Replace with the actual API endpoint
+        data: JSON.stringify(requestData),
+        contentType: "application/json",
+        success: function (response) {
+          $.ajax({
+            type: "GET",
+            url: "/api/payments/callback", // Your callback endpoint
+            success: function (callbackResponse) {
+              console.log("Mpesa Callback Response:", callbackResponse);
+              console.log("Success:", response);
+              // Display the toast message with the confirmation code
+              const toastMessage = `Payment successful! Confirmation Code: ${callbackResponse}`;
+              showSuccessToast(toastMessage);
+              // Update the confirmation input field
+              $("#mpesaConfirmationInput")
+                .val(callbackResponse)
+                .removeAttr("hidden");
+              $("#mpesaConfirmationTxt")
+                // .val(response.confirmationCode)
+                .removeAttr("hidden");
+              // Hide the "Send Mpesa Data" button
+              $("#sendMpesaDataBtn").hide();
+              // Show the "PLACE ORDER" button
+              $("#placeOrderBtn").removeAttr("hidden");
+            },
+            error: function (error) {
+              console.error("Error fetching callback data:", error);
+            },
+          });
+        },
+        error: function (error) {
+          // Handle the error response
+          console.error("Error:", error);
+          // Show an error message
+          alert("Payment failed. Please try again.");
+        },
+      });
+    });
+
+    // Function to show the success toast message
+    function showSuccessToast(message) {
+      const successToast = $("#successToast");
+      const toastBody = successToast.find(".toast-body");
+      toastBody.text(message);
+      successToast.toast("show");
+    }
+
     $("form").submit(function (event) {
       event.preventDefault(); // Prevent the default form submission
 

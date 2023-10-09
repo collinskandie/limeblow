@@ -9,9 +9,10 @@ const sequelize = new Sequelize(
   {
     host: config.production.host,
     dialect: config.production.dialect,
-  }
+    logging: false,
+  },
+  
 );
-
 // Sync models with the database
 sequelize
   .sync()

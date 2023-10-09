@@ -7,19 +7,12 @@ const Dispatch = require("../models/dispatch");
 const { billingAdress } = require("./usersController");
 const { sendInvoice } = require("../mailer/sendmail");
 // Define these variables at the module level
-let mpesa_no = "";
-let new_amount = 0;
-let items = [];
-let invoiceNumber = "";
-let paymentMethod = "";
-let user = "new";
-
 async function newMpesa(req, res) {
   try {
-    mpesa_no = req.body.mpesa_phone_number.substring(1);
-    const cost_items = req.body.total;
+    mpesa_no = req.body.mpesaNumber.substring(1);
+    const cost_items = req.body.cartTotal;
     amount = Math.ceil(cost_items);
-    items = req.body.cartItems;
+    // items = req.body.cartItems;
     new_amount = amount;
     const date = new Date();
 
@@ -38,18 +31,18 @@ async function newMpesa(req, res) {
       "base64"
     );
     const mpesaResponse = await axios.post(
-      "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
+      "https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
       {
         BusinessShortCode: shortcode,
         Password: password,
         Timestamp: timestamp,
-        TransactionType: "CustomerPayBillOnline",
+        TransactionType: "CustomerBuyGoodsOnline",
         Amount: amount,
         PartyA: `254${mpesa_no}`,
         PartyB: shortcode,
         PhoneNumber: `254${mpesa_no}`,
         CallBackURL:
-          "https://c960-2c0f-fe38-224b-af0-c1b6-2692-602d-b75c.ngrok-free.app/api/payments/callback",
+          "https://bb38-197-248-146-143.ngrok-free.app/api/payments/callback",
         AccountReference: `254${mpesa_no}`,
         TransactionDesc: "Test",
       },
@@ -60,10 +53,19 @@ async function newMpesa(req, res) {
       }
     );
 
-    // Handle the response from mpesaCallback
-    const callbackResponse = mpesaCallback(mpesaResponse.data);
-    console.log(callbackResponse);
-    res.status(200).json(callbackResponse);
+    if (mpesaResponse.data.ResponseCode === "0") {
+      // console.log(mpesaResponse.data);
+      res.status(200).json({
+        success: true,
+        mpesaResponse: mpesaResponse.data,
+      });
+    } else {
+      // Handle Mpesa errors here and send an appropriate response
+      res.status(400).json({
+        success: false,
+        error: "Mpesa payment failed",
+      });
+    }
   } catch (error) {
     console.error(error);
     console.error(error.data);
@@ -78,7 +80,7 @@ async function savePayment(req, res) {
 
     const {
       first_name,
-      last_name, 
+      last_name,
       county,
       address,
       apartment,
@@ -145,36 +147,21 @@ async function mpesaCallBack(req, res) {
       callbackBody: callbackdata.Body.stkCallback,
     };
   } else {
-    //create sales entry
-    console.log(items);
-    // Example usage:
-    const invoiceNumber = generateInvoiceNumber();
-    createSale(user, items, invoiceNumber, new_amount);
-
-    createReceiptItems(items, invoiceNumber);
-
     const body = callbackdata.Body.stkCallback.CallbackMetadata;
-    console.log(body);
+    // console.log(body);
     const amount = callbackdata.Body.stkCallback.CallbackMetadata.Item[0].Value;
     const trans_id =
       callbackdata.Body.stkCallback.CallbackMetadata.Item[1].Value;
     const trans_date =
       callbackdata.Body.stkCallback.CallbackMetadata.Item[2].Value;
     const phone = callbackdata.Body.stkCallback.CallbackMetadata.Item[3].Value;
-
-    console.log({ phone, amount, trans_id, trans_date });
-    // invoiceNumber = "12321";
-    paymentMethod = "mpesa";
-
-    //here
-    const savePayment_status = await savePaymentDetails(
-      trans_id,
-      amount,
+    // console.log({ phone, amount, trans_id, trans_date });
+    return {
       phone,
-      invoiceNumber,
-      paymentMethod
-    );
-    return savePayment_status;
+      amount,
+      trans_id,
+      trans_date,
+    };
   }
 }
 async function createReceiptItems(items, invoiceNumber) {
