@@ -24,34 +24,39 @@ async function newMpesa(req, res) {
       ("0" + date.getMinutes()).slice(-2) +
       ("0" + date.getSeconds()).slice(-2);
 
-    const shortcode = process.env.MPESA_PAYBILL;
+    const shortcode = process.env.MPESA_BUYGOODS;
     const passkey = process.env.MPESA_PASSKEY;
 
     const password = new Buffer.from(shortcode + passkey + timestamp).toString(
       "base64"
     );
-    const mpesaResponse = await axios.post(
-      "https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
-      {
-        BusinessShortCode: shortcode,
-        Password: password,
-        Timestamp: timestamp,
-        TransactionType: "CustomerBuyGoodsOnline",
-        Amount: amount,
-        PartyA: `254${mpesa_no}`,
-        PartyB: shortcode,
-        PhoneNumber: `254${mpesa_no}`,
-        CallBackURL:
-          "https://bb38-197-248-146-143.ngrok-free.app/api/payments/callback",
-        AccountReference: `254${mpesa_no}`,
-        TransactionDesc: "Test",
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
+    const mpesaResponse = await axios
+      .post(
+        "https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
+        {
+          BusinessShortCode: shortcode,
+          Password: password,
+          Timestamp: timestamp,
+          TransactionType: "CustomerBuyGoodsOnline",
+          Amount: amount,
+          PartyA: `254${mpesa_no}`,
+          PartyB: 9698167,
+          PhoneNumber: `254${mpesa_no}`,
+          CallBackURL:
+            "https://bb38-197-248-146-143.ngrok-free.app/api/payments/callback",
+          AccountReference: `254${mpesa_no}`,
+          TransactionDesc: "Payment of goods",
         },
-      }
-    );
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+        res.status(400).json(err.message);
+      });
 
     if (mpesaResponse.data.ResponseCode === "0") {
       // console.log(mpesaResponse.data);

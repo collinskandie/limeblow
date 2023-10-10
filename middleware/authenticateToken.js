@@ -7,7 +7,7 @@ function authenticateToken(req, res, next) {
   if (!token) {
     return next(); // No token, continue without setting req.user
   }
- const secrete_key = process.env.SECRETE;
+  const secrete_key = process.env.SECRETE;
   jwt.verify(token, secrete_key, (err, user) => {
     if (err) {
       return next(); // Invalid token, continue without setting req.user
@@ -32,8 +32,9 @@ const generateToken = async (req, res, next) => {
         },
       }
     )
-    .then((resp) => {
+    .then((resp) => { 
       token = resp.data.access_token;
+      // console.log(resp.data.access_token);
       next();
     })
     .catch((error) => {
