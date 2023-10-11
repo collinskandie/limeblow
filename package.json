@@ -1,7 +1,7 @@
 {
-  "name": "limeblow",
+  "name": "Limebow",
   "version": "1.0.0",
-  "description": "Limeblow online shop",
+  "description": "Limebow online shop",
   "main": "app.js",
   "scripts": {
     "test": "test",
