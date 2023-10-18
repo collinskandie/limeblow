@@ -15,7 +15,7 @@
 </style>
 
 <!-- Start of HTML -->
-<%- include('hero.ejs') %>
+<section class="hero" style="height: 100vh"><%- include('hero.ejs') %></section>
 <section class="checkout spad">
   <div class="container">
     <div class="checkout__form">
@@ -54,8 +54,6 @@
             </div>
           </div>
         </div>
-
-        <!-- Your Order Summary -->
       </div>
     </div>
   </div>
@@ -147,4 +145,3 @@
     totalElement.textContent = `KES ${totalPrice.toFixed(2)}`;
   });
 </script>
- 

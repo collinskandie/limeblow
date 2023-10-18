@@ -15,7 +15,7 @@
 </style>
 
 <!-- Start of HTML -->
-<%- include('hero.ejs') %>
+<section class="hero"><%- include('hero.ejs') %></section>
 <section class="checkout spad">
   <div class="container">
     <div class="row">
@@ -135,15 +135,11 @@
         mpesaPhoneNumberField.hide();
         cardPaymentsField.hide();
       }
-
       //Mpesa payment code
       const payButton = $("#payButton");
-
       // Add a click event listener to the "Pay" button
-      payButton.click(function () {
-        // Get the Mpesa phone number value
+      payButton.click(function () {        
         const mpesaPhoneNumber = $("#mpesaPhoneNumber").val();
-
         // Create a JSON object with the Mpesa phone number and cartItems
         let totalPrice = 0;
         storedCartItems.forEach((item) => {
@@ -157,27 +153,27 @@
           total: totalPrice.toFixed(2), // Format total as a string with two decimal places
         };
 
-        // Send a POST request to the /api/payments/mpesa endpoint
+        // Send a POST request to initiate the payment
         $.ajax({
           type: "POST",
-          url: "/api/payments/mpesa", // Update with your actual API endpoint
+          url: "/api/payments/mpesa",
           data: JSON.stringify(paymentData),
           contentType: "application/json",
           success: function (response) {
             // Handle the success response here
-            console.log("Payment success:", response);
-            alert(response.phone);
-            // You can also show a success message or redirect the user as needed
+            console.log("Payment request success:", response);
+            alert(response.transactionId); // Remove the double quotes
+            console.log(response.transactionId);
+            checkTransactionStatus(response.transactionId);
           },
           error: function (error) {
             // Handle the error response here
-            console.error("Payment error:", error);
+            console.error("Payment request error:", error);
             // You can display an error message to the user if needed
           },
         });
       });
     }
-
     // Event handler for payment method checkbox changes
     $("input[name='payment_method']").change(function () {
       togglePaymentFields();

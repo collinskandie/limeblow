@@ -7,13 +7,28 @@ const Dispatch = require("../models/dispatch");
 const { billingAdress } = require("./usersController");
 const { sendInvoice } = require("../mailer/sendmail");
 // Define these variables at the module level
+
+const transactions = {};
+
 async function newMpesa(req, res) {
   try {
-    mpesa_no = req.body.mpesaNumber.substring(1);
+    const mpesa_no = req.body.mpesaNumber.substring(1);
     const cost_items = req.body.cartTotal;
-    amount = Math.ceil(cost_items);
-    // items = req.body.cartItems;
-    new_amount = amount;
+    const amount = Math.ceil(cost_items);
+
+    // Generate a unique transaction ID
+    const transactionId = generateInvoiceNumber();
+
+    const transactionData = {
+      status: "pending",
+      phone: mpesa_no,
+      amount: amount,
+      trans_id: "",
+      trans_date: "",
+    };
+
+    transactions[transactionId] = transactionData;
+
     const date = new Date();
 
     const timestamp =
@@ -26,57 +41,56 @@ async function newMpesa(req, res) {
 
     const shortcode = process.env.MPESA_BUYGOODS;
     const passkey = process.env.MPESA_PASSKEY;
+    const till = process.env.MPESA_TILL;
 
     const password = new Buffer.from(shortcode + passkey + timestamp).toString(
       "base64"
     );
-    const mpesaResponse = await axios
-      .post(
-        "https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
-        {
-          BusinessShortCode: shortcode,
-          Password: password,
-          Timestamp: timestamp,
-          TransactionType: "CustomerBuyGoodsOnline",
-          Amount: amount,
-          PartyA: `254${mpesa_no}`,
-          PartyB: 9698167,
-          PhoneNumber: `254${mpesa_no}`,
-          CallBackURL:
-            "https://bb38-197-248-146-143.ngrok-free.app/api/payments/callback",
-          AccountReference: `254${mpesa_no}`,
-          TransactionDesc: "Payment of goods",
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-      .then((response) => {
-        console.log(response.data);
-        res.status(400).json(err.message);
-      });
 
-    if (mpesaResponse.data.ResponseCode === "0") {
-      // console.log(mpesaResponse.data);
-      res.status(200).json({
-        success: true,
-        mpesaResponse: mpesaResponse.data,
-      });
-    } else {
-      // Handle Mpesa errors here and send an appropriate response
-      res.status(400).json({
-        success: false,
-        error: "Mpesa payment failed",
-      });
-    }
+    const mpesaResponse = await axios.post(
+      "https://api.safaricom.co.ke/mpesa/stkpush/v1/processrequest",
+      {
+        BusinessShortCode: shortcode,
+        Password: password,
+        Timestamp: timestamp,
+        TransactionType: "CustomerBuyGoodsOnline",
+        Amount: amount,
+        PartyA: `254${mpesa_no}`,
+        PartyB: till,
+        PhoneNumber: `254${mpesa_no}`,
+        CallBackURL:
+          "https://c591-197-248-146-143.ngrok.io/api/payments/callback", // Update this URL
+        AccountReference: `254${mpesa_no}`,
+        TransactionDesc: "Payment of goods",
+      },
+
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    // Handle the success response from M-Pesa API
+    console.log("M-Pesa API response:", mpesaResponse.data);
+    // You should update the transaction status here based on the response
+
+    res.json({ message: "Payment request in progress", transactionId });
+  } catch (error) {
+    console.error("Error while making M-Pesa request:", error);
+    res.status(500).json(error.message);
+  }
+}
+async function confirmPayment(req, res) {
+  try {
+    let transid = req.params.transactionId;
+    console.log(transid);
   } catch (error) {
     console.error(error);
     console.error(error.data);
     res.status(500).json(error.data);
   }
 }
+
 async function savePayment(req, res) {
   try {
     // console.log(req.body.cartItems);
@@ -341,4 +355,5 @@ module.exports = {
   saveDispatch,
   getDispatch,
   savePayment,
+  confirmPayment,
 };
