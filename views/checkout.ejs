@@ -1,6 +1,4 @@
-<section class="hero" >
-  <%- include('hero.ejs') %>    
-</section>
+<section class="hero"><%- include('hero.ejs') %></section>
 <section class="checkout spad">
   <div class="container">
     <div class="row">
@@ -130,41 +128,62 @@
         cartTotal,
       };
 
-      // Send an AJAX request to the server
       $.ajax({
         type: "POST",
         url: "/api/payments/mpesa", // Replace with the actual API endpoint
         data: JSON.stringify(requestData),
         contentType: "application/json",
         success: function (response) {
-          $.ajax({
-            type: "GET",
-            url: "/api/payments/callback", // Your callback endpoint
-            success: function (callbackResponse) {
-              console.log("Mpesa Callback Response:", callbackResponse);
-              console.log("Success:", response);
-              // Display the toast message with the confirmation code
-              const toastMessage = `Payment successful! Confirmation Code: ${callbackResponse}`;
-              showSuccessToast(toastMessage);
-              // Update the confirmation input field
-              $("#mpesaConfirmationInput")
-                .val(callbackResponse)
-                .removeAttr("hidden");
-              $("#mpesaConfirmationTxt")
-                // .val(response.confirmationCode)
-                .removeAttr("hidden");
-              // Hide the "Send Mpesa Data" button
-              $("#sendMpesaDataBtn").hide();
-              // Show the "PLACE ORDER" button
-              $("#placeOrderBtn").removeAttr("hidden");
-            },
-            error: function (error) {
-              console.error("Error fetching callback data:", error);
-            },
-          });
+          const transactionId = response.transactionId;
+
+          // Function to check payment status
+          function checkPaymentStatus() {
+            $.ajax({
+              type: "GET",
+              url: `/api/payments/checkstatus/${transactionId}`, // Your callback endpoint
+              success: function (callbackResponse) {
+                
+                if (callbackResponse === "Success") {
+                  console.log("Payment is successful");
+                  console.log("Mpesa Callback Response:", callbackResponse);                 
+                  const toastMessage = `Payment successful! Confirmation Code: ${callbackResponse}`;
+                  showSuccessToast(toastMessage);
+                  // Update the confirmation input field
+                  $("#mpesaConfirmationInput")
+                    .val(callbackResponse)
+                    .removeAttr("hidden");
+                  $("#mpesaConfirmationTxt")
+                    // .val(response.confirmationCode)
+                    .removeAttr("hidden");
+                  // Hide the "Send Mpesa Data" button
+                  $("#sendMpesaDataBtn").hide();
+                  // Show the "PLACE ORDER" button
+                  $("#placeOrderBtn").removeAttr("hidden");
+                } else {
+                  console.log("Payment is still pending");
+                  // Payment is still pending, you can either continue checking or set a maximum limit
+                  // and handle the pending case
+                }
+              },
+              error: function (error) {
+                console.error("Error fetching callback data:", error);
+                // Handle the error, e.g., retry or display an error message
+              },
+            });
+          }
+
+          // Check the payment status every 5 seconds (adjust as needed)
+          const checkInterval = setInterval(checkPaymentStatus, 5000);
+
+          // You can set a maximum number of checks or use other conditions to exit the loop
+
+          // Example: stop checking after 10 minutes (adjust as needed)
+          setTimeout(function () {
+            clearInterval(checkInterval);
+            console.log("Stopped checking payment status");
+          }, 600000); // 10 minutes in milliseconds
         },
         error: function (error) {
-          // Handle the error response
           console.error("Error:", error);
           // Show an error message
           alert("Payment failed. Please try again.");

@@ -138,7 +138,7 @@
       //Mpesa payment code
       const payButton = $("#payButton");
       // Add a click event listener to the "Pay" button
-      payButton.click(function () {        
+      payButton.click(function () {
         const mpesaPhoneNumber = $("#mpesaPhoneNumber").val();
         // Create a JSON object with the Mpesa phone number and cartItems
         let totalPrice = 0;
@@ -164,12 +164,11 @@
             console.log("Payment request success:", response);
             alert(response.transactionId); // Remove the double quotes
             console.log(response.transactionId);
-            checkTransactionStatus(response.transactionId);
+            //checkTransactionStatus(response.transactionId);
           },
           error: function (error) {
-            // Handle the error response here
             console.error("Payment request error:", error);
-            // You can display an error message to the user if needed
+            alert(error); // Remove the double quotes
           },
         });
       });
@@ -178,10 +177,8 @@
     $("input[name='payment_method']").change(function () {
       togglePaymentFields();
     });
-
     // Initial toggle when the page loads
     togglePaymentFields();
-
     const storedCartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
     const cartItemList = document.getElementById("cartItemList");
     let totalPrice = 0;

@@ -21,7 +21,7 @@ const generateToken = async (req, res, next) => {
   const secrete = process.env.MPESA_CONSUMER_SECRETE;
   const consumer_key = process.env.MPESA_CONSUMER_KEY;
   const auth = new Buffer.from(`${consumer_key}:${secrete}`).toString("base64");
-  console.log(auth);
+ 
 
   await axios
     .get(
@@ -33,8 +33,7 @@ const generateToken = async (req, res, next) => {
       }
     )
     .then((resp) => { 
-      token = resp.data.access_token;
-      // console.log(resp.data.access_token);
+      token = resp.data.access_token;      
       next();
     })
     .catch((error) => {

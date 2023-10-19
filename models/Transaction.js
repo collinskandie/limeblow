@@ -1,27 +1,40 @@
-// models/Transaction.js
+const { DataTypes, Model } = require("sequelize");
+const sequelize = require("../config/db"); // Import your Sequelize instance
 
-const Sequelize = require("sequelize");
-const db = require("../config/db"); // Your database connection
+class Transaction extends Model {}
 
-const Transaction = db.define("transaction", {
-  status: {
-    type: Sequelize.STRING,
-    allowNull: false,
+Transaction.init(
+  {
+    id: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    phone: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    amount: {
+      type: DataTypes.DECIMAL(10, 2),
+      allowNull: false,
+    },
+    trans_id: {
+      type: DataTypes.STRING,
+    },
+    trans_date: {
+      type: DataTypes.DATE,
+    },
   },
-  phone: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
-  amount: {
-    type: Sequelize.DECIMAL(10, 2),
-    allowNull: false,
-  },
-  trans_id: {
-    type: Sequelize.STRING,
-  },
-  trans_date: {
-    type: Sequelize.DATE,
-  },
-});
-
+  {
+    sequelize, // Pass your Sequelize instance
+    modelName: "Transaction", // Specify the model name
+    timestamps: true, // Enable timestamps (createdAt and updatedAt)
+    underscored: true, // Use underscored naming for columns (e.g., created_at)
+    tableName: "transaction", // Optional, specify the table name
+  }
+);
 module.exports = Transaction;

@@ -6,10 +6,8 @@ const { saveBase64Image } = require("./savefile");
 const Dispatch = require("../models/dispatch");
 const { billingAdress } = require("./usersController");
 const { sendInvoice } = require("../mailer/sendmail");
-// Define these variables at the module level
-
-const transactions = {};
-
+const Transaction = require("../models/Transaction");
+let latestTrans = "";
 async function newMpesa(req, res) {
   try {
     const mpesa_no = req.body.mpesaNumber.substring(1);
@@ -17,17 +15,18 @@ async function newMpesa(req, res) {
     const amount = Math.ceil(cost_items);
 
     // Generate a unique transaction ID
-    const transactionId = generateInvoiceNumber();
-
-    const transactionData = {
+    // Create a new transaction
+    let transactionId = "";
+    const transaction = await Transaction.create({
       status: "pending",
       phone: mpesa_no,
       amount: amount,
       trans_id: "",
-      trans_date: "",
-    };
+      trans_date: new Date("2023-10-18 12:34:56"),
+    });
 
-    transactions[transactionId] = transactionData;
+    transactionId = transaction.id;
+    console.log("Transaction created with ID:", transactionId);
 
     const date = new Date();
 
@@ -59,11 +58,10 @@ async function newMpesa(req, res) {
         PartyB: till,
         PhoneNumber: `254${mpesa_no}`,
         CallBackURL:
-          "https://c591-197-248-146-143.ngrok.io/api/payments/callback", // Update this URL
+          "https://eedc-197-248-146-143.ngrok.io/api/payments/callback", // Update this URL
         AccountReference: `254${mpesa_no}`,
         TransactionDesc: "Payment of goods",
       },
-
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -72,12 +70,21 @@ async function newMpesa(req, res) {
     );
     // Handle the success response from M-Pesa API
     console.log("M-Pesa API response:", mpesaResponse.data);
+    latestTrans = transactionId;
     // You should update the transaction status here based on the response
-
-    res.json({ message: "Payment request in progress", transactionId });
+    res.status(200).json({
+      success: true,
+      message: "Payment request in progress",
+      transactionId: transactionId,
+    });
   } catch (error) {
     console.error("Error while making M-Pesa request:", error);
-    res.status(500).json(error.message);
+    const errorMessage = error.message;
+    console.log(errorMessage);
+    res.status(500).json({
+      success: false,
+      message: "Payment request failed. Please try again.",
+    });
   }
 }
 async function confirmPayment(req, res) {
@@ -90,13 +97,11 @@ async function confirmPayment(req, res) {
     res.status(500).json(error.data);
   }
 }
-
 async function savePayment(req, res) {
   try {
     // console.log(req.body.cartItems);
     console.log(req.body);
     const user = generateInvoiceNumber();
-
     const {
       first_name,
       last_name,
@@ -157,31 +162,30 @@ async function savePayment(req, res) {
 }
 async function mpesaCallBack(req, res) {
   const callbackdata = req.body;
+  let status = "";
+  let amount = "";
+  let trans_id = "";
+  // let phone = "";
   if (!callbackdata.Body.stkCallback.CallbackMetadata) {
     console.log(callbackdata.Body.stkCallback);
     res.json("ok");
-    return {
-      status: "error",
-      message: callbackdata.Body.stkCallback.ResultDesc,
-      callbackBody: callbackdata.Body.stkCallback,
-    };
+
+    // return {
+    //   status: "error",
+    //   message: callbackdata.Body.stkCallback.ResultDesc,
+    //   callbackBody: callbackdata.Body.stkCallback,
+    // };
   } else {
     const body = callbackdata.Body.stkCallback.CallbackMetadata;
     // console.log(body);
-    const amount = callbackdata.Body.stkCallback.CallbackMetadata.Item[0].Value;
-    const trans_id =
-      callbackdata.Body.stkCallback.CallbackMetadata.Item[1].Value;
-    const trans_date =
-      callbackdata.Body.stkCallback.CallbackMetadata.Item[2].Value;
-    const phone = callbackdata.Body.stkCallback.CallbackMetadata.Item[3].Value;
-    // console.log({ phone, amount, trans_id, trans_date });
-    return {
-      phone,
-      amount,
-      trans_id,
-      trans_date,
-    };
+    amount = callbackdata.Body.stkCallback.CallbackMetadata.Item[0].Value;
+    trans_id = callbackdata.Body.stkCallback.CallbackMetadata.Item[1].Value;
+    trans_date = callbackdata.Body.stkCallback.CallbackMetadata.Item[2].Value;
+    phone = callbackdata.Body.stkCallback.CallbackMetadata.Item[3].Value;
+    status = "Success";
+    latestTrans;
   }
+  updateTransaction(status, latestTrans,trans_id);
 }
 async function createReceiptItems(items, invoiceNumber) {
   try {
@@ -199,6 +203,36 @@ async function createReceiptItems(items, invoiceNumber) {
   } catch (error) {
     console.error(`Error creating ReceiptItems: ${error.message}`);
   }
+}
+function updateTransaction(status, latestTrans, trans) {
+  Transaction.update(
+    {
+      status: status,
+      trans_id: trans,
+    },
+    {
+      where: {
+        id: latestTrans,
+      },
+    }
+  )
+    .then(([updatedCount, updatedRows]) => {
+      if (updatedCount > 0) {
+        console.log(
+          `Updated ${updatedCount} transaction(s) with id ${latestTrans} and phone ${phone}`
+        );
+        // Do something on successful update
+      } else {
+        console.log(
+          `No transactions found with id ${latestTrans} and phone ${phone}`
+        );
+        // Handle the case where no matching transactions were found
+      }
+    })
+    .catch((error) => {
+      console.error("Error updating transaction:", error);
+      // Handle the error
+    });
 }
 
 async function createSale(user, items, invoiceNumber, totalCost) {
@@ -347,7 +381,6 @@ async function savePaymentDetails(
     };
   }
 }
-
 module.exports = {
   newMpesa,
   newCard,
