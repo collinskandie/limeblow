@@ -58,7 +58,7 @@ async function newMpesa(req, res) {
         PartyB: till,
         PhoneNumber: `254${mpesa_no}`,
         CallBackURL:
-          "https://eedc-197-248-146-143.ngrok.io/api/payments/callback", // Update this URL
+          "https://5f81-197-248-146-143.ngrok.io/api/payments/callback", // Update this URL
         AccountReference: `254${mpesa_no}`,
         TransactionDesc: "Payment of goods",
       },
@@ -89,13 +89,61 @@ async function newMpesa(req, res) {
 }
 async function confirmPayment(req, res) {
   try {
-    let transid = req.params.transactionId;
-    console.log(transid);
+    // Get the transaction ID from the request parameters
+    const transid = req.params.Id;
+    const transaction = await Transaction.findByPk(transid);
+
+    // Check if the transaction exists
+    if (transaction) {
+      const transStatus = transaction.status;
+      const transReference = transaction.trans_id;
+      console.log(transReference);
+      console.log(transStatus);
+
+      // Respond with a success status and transaction details
+      res.status(200).json({
+        success: true,
+        transactionId: transid,
+        status: transStatus,
+        reference: transReference,
+      });
+    } else {
+      // Handle the case where the transaction doesn't exist
+      res.status(404).json({
+        success: false,
+        message: "Transaction not found",
+      });
+    }
   } catch (error) {
     console.error(error);
-    console.error(error.data);
-    res.status(500).json(error.data);
+    // Log the error message or stack trace
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
   }
+}
+async function mpesaCallBack(req, res) {
+  const callbackdata = req.body;
+  let status = "";
+  let amount = "";
+  let trans_id = "";
+  let phone = "";
+  if (!callbackdata.Body.stkCallback.CallbackMetadata) {
+    console.log(callbackdata.Body.stkCallback);
+    status = "Error";
+    trans_id = callbackdata.Body.stkCallback;
+    res.json("ok");
+  } else {
+    const body = callbackdata.Body.stkCallback.CallbackMetadata;
+    amount = callbackdata.Body.stkCallback.CallbackMetadata.Item[0].Value;
+    trans_id = callbackdata.Body.stkCallback.CallbackMetadata.Item[1].Value;
+    trans_date = callbackdata.Body.stkCallback.CallbackMetadata.Item[2].Value;
+    phone = callbackdata.Body.stkCallback.CallbackMetadata.Item[3].Value;
+    status = "Success";
+    latestTrans;
+  }
+  updateTransaction(status, latestTrans, trans_id);
 }
 async function savePayment(req, res) {
   try {
@@ -160,33 +208,6 @@ async function savePayment(req, res) {
     res.status(500).json(error.data);
   }
 }
-async function mpesaCallBack(req, res) {
-  const callbackdata = req.body;
-  let status = "";
-  let amount = "";
-  let trans_id = "";
-  // let phone = "";
-  if (!callbackdata.Body.stkCallback.CallbackMetadata) {
-    console.log(callbackdata.Body.stkCallback);
-    res.json("ok");
-
-    // return {
-    //   status: "error",
-    //   message: callbackdata.Body.stkCallback.ResultDesc,
-    //   callbackBody: callbackdata.Body.stkCallback,
-    // };
-  } else {
-    const body = callbackdata.Body.stkCallback.CallbackMetadata;
-    // console.log(body);
-    amount = callbackdata.Body.stkCallback.CallbackMetadata.Item[0].Value;
-    trans_id = callbackdata.Body.stkCallback.CallbackMetadata.Item[1].Value;
-    trans_date = callbackdata.Body.stkCallback.CallbackMetadata.Item[2].Value;
-    phone = callbackdata.Body.stkCallback.CallbackMetadata.Item[3].Value;
-    status = "Success";
-    latestTrans;
-  }
-  updateTransaction(status, latestTrans,trans_id);
-}
 async function createReceiptItems(items, invoiceNumber) {
   try {
     for (const item of items) {
@@ -223,9 +244,7 @@ function updateTransaction(status, latestTrans, trans) {
         );
         // Do something on successful update
       } else {
-        console.log(
-          `No transactions found with id ${latestTrans} and phone ${phone}`
-        );
+        console.log(`No transactions found with id ${latestTrans}`);
         // Handle the case where no matching transactions were found
       }
     })
@@ -268,7 +287,6 @@ function generateInvoiceNumber() {
 
   // Generate a random number between 1000 and 9999
   const randomPart = Math.floor(Math.random() * 9000) + 1000;
-
   // Combine date/time and random part to create the invoice number
   const invoiceNumber = `${year}${month}${day}${hours}${minutes}${seconds}${randomPart}`;
 

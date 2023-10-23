@@ -7,7 +7,7 @@ router.post("/mpesa", generateToken, paymentsController.newMpesa);
 router.post("/card", paymentsController.newCard);
 router.post("/callback", paymentsController.mpesaCallBack);
 router.post('/confirmation',paymentsController.savePayment);
-router.post('/checkstatus/:transactionId',paymentsController.confirmPayment);
+router.get('/checkstatus/:Id',paymentsController.confirmPayment);
 module.exports = router; 
 
  // save payemnt as a transaction

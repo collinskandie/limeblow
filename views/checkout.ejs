@@ -135,17 +135,20 @@
         contentType: "application/json",
         success: function (response) {
           const transactionId = response.transactionId;
-
+          const transactionMesssage = response.message;
+          alert(transactionMesssage);
           // Function to check payment status
           function checkPaymentStatus() {
             $.ajax({
               type: "GET",
               url: `/api/payments/checkstatus/${transactionId}`, // Your callback endpoint
-              success: function (callbackResponse) {
-                
-                if (callbackResponse === "Success") {
-                  console.log("Payment is successful");
-                  console.log("Mpesa Callback Response:", callbackResponse);                 
+              success: function (res) {
+                const paymentStatus = res.transStatus;
+                const mpesaTrans = res.transactionId;
+                const callbackResponse = res.success;
+                if (paymentStatus === "Success") {
+                  alert("Payment is successful");
+                  console.log("Mpesa Callback Response:", callbackResponse);
                   const toastMessage = `Payment successful! Confirmation Code: ${callbackResponse}`;
                   showSuccessToast(toastMessage);
                   // Update the confirmation input field
@@ -159,7 +162,12 @@
                   $("#sendMpesaDataBtn").hide();
                   // Show the "PLACE ORDER" button
                   $("#placeOrderBtn").removeAttr("hidden");
+                } else if (paymentStatus === "Error") {
+                  // Handle error
+                  alert("Error", mpesaTrans);
+                  clearInterval(checkInterval);
                 } else {
+                  alert("Payment is still pending");
                   console.log("Payment is still pending");
                   // Payment is still pending, you can either continue checking or set a maximum limit
                   // and handle the pending case
@@ -173,7 +181,7 @@
           }
 
           // Check the payment status every 5 seconds (adjust as needed)
-          const checkInterval = setInterval(checkPaymentStatus, 5000);
+          const checkInterval = setInterval(checkPaymentStatus, 10000);
 
           // You can set a maximum number of checks or use other conditions to exit the loop
 
