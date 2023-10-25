@@ -82,14 +82,14 @@
 <section class="categories">
   <div class="row">
     <div class="categories__slider owl-carousel">
-      <% categories.forEach(category => { %>
+      <% specialProducts.forEach(specialProduct => { %>
       <div class="col-lg-3">
         <div
           class="categories__item set-bg"
-          data-setbg="/img/uploads/<%= Array.isArray(category.imageUrl) ? category.imageUrl[0] : category.imageUrl %>"
+          data-setbg="/img/uploads/<%= Array.isArray(specialProduct.imagesurl) ? specialProduct.imagesurl[0] : specialProduct.imagesurl %>"
         >
           <h5>
-            <a href="/department/<%= category.id %>"><%= category.name %></a>
+            <a href="/item-details/<%= specialProduct.productid %>"><%= specialProduct.name %></a>
           </h5>
         </div>
       </div>

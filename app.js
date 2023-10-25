@@ -13,7 +13,7 @@ const Product = require("./models/Product");
 
 //
 const port = process.env.PORT || 3000;
-// 
+//
 // Middleware to log requests
 app.use((req, res, next) => {
   console.log(`Received ${req.method} request for ${req.originalUrl}`);
@@ -40,42 +40,19 @@ app.get("/run-migrations", runMigration.runMigrations);
 
 // Define your other routes here
 
-app.get("/", async (req, res) => {
-  try {
-    const categories = await Category.findAll();
-    const products = await Product.findAll();
-    const latestproducts = await Product.findAll({
-      order: [["createdAt", "DESC"]],
-      limit: 3,
-    });
-    const blogs = await Blog.findAll({
-      order: [["createdAt", "DESC"]],
-      limit: 3,
-    });
+app.get("/", handleIndexRequest);
+app.get("/index", handleIndexRequest);
 
-    res.render("index", {
-      title: "Home",
-      layout: "layouts/master",
-      categories,
-      products,
-      blogs,
-      latestproducts,
-    });
-  } catch (error) {
-    console.error(error);
-    res.render("index", {
-      title: "Home",
-      layout: "layouts/master",
-      categories: [],
-      product: [],
-      blogs: [],
-      latestproducts: [],
-    });
-  }
-});
-app.get("/index", async (req, res) => {
+// function to handle index routes
+async function handleIndexRequest(req, res) {
   try {
     const categories = await Category.findAll();
+    const specialProducts = await Product.findAll({
+      where: {
+        category: 2,
+      },
+    });
+    console.log(specialProducts);
     const products = await Product.findAll();
     const latestproducts = await Product.findAll({
       order: [["createdAt", "DESC"]],
@@ -91,6 +68,7 @@ app.get("/index", async (req, res) => {
       categories,
       products,
       blogs,
+      specialProducts,
       latestproducts,
     });
   } catch (error) {
@@ -104,7 +82,7 @@ app.get("/index", async (req, res) => {
       latestproducts: [],
     });
   }
-});
+}
 app.get("/contact", async (req, res) => {
   try {
     const categories = await Category.findAll();
@@ -211,7 +189,7 @@ app.get("/success/:userid", async (req, res) => {
     const categories = await Category.findAll();
     const userid = req.params.userid;
 
-    const salesDetails = await Sale.findOne({ 
+    const salesDetails = await Sale.findOne({
       where: {
         user: userid,
       },
@@ -344,18 +322,22 @@ app.get("/shop-grid", async (req, res) => {
     });
   }
 });
-app.get("/login", (req, res) => {
+app.get("/login", async (req, res) => {
+  const categories = await Category.findAll();
   res.render("login", {
     title: "Login",
     layout: "layouts/master",
+    categories,
   });
 });
-app.get("/signup", (req, res) => {
+app.get("/signup", async (req, res) => {
+  const categories = await Category.findAll();
   const userSessionExists = req.session && req.session.user; // Modify this based on your session management logic
   res.render("signup", {
     title: "Sign Up",
     layout: "layouts/master",
-    userSessionExists, // Pass the session status to the view
+    userSessionExists,
+    categories, // Pass the session status to the view
   });
 });
 

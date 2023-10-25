@@ -47,18 +47,12 @@ async function addProduct(req, res) {
 
     // Initialize an array to store image filenames
     const imageFilenames = [];
-
     // Check if images were uploaded
-    if (req.body.images) {
-      // Loop through the uploaded images and save each one
+    if (req.body.images) {      
       for (const image of req.body.images) {
-        // Read the image data as a base64-encoded string
+      
         const imageData = image;
-
-        // Use your saveBase64Image function to save the image and get the filename
-        const newImageName = await saveBase64Image(imageData);
-
-        // Push the filename to the array
+        const newImageName = await saveBase64Image(imageData);      
         imageFilenames.push(newImageName);
       }
     }

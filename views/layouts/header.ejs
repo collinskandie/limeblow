@@ -133,13 +133,11 @@
             <li class="<%= title === 'Shop' ? 'active' : '' %>">
               <a href="/shop-grid">Shop</a>
             </li>
-
-            <li class="<%= title === 'Blog' ? 'active' : '' %>">
-              <a href="/blog">Blog</a>
+            <% categories.forEach(category => { %>
+            <li class="<%= title === 'Category Details' ? 'active' : '' %>">
+              <a href="/department/<%= category.id %>"><%= category.name %></a>
             </li>
-            <li class="<%= title === 'Contact Us' ? 'active' : '' %>">
-              <a href="/contact">Contact</a>
-            </li>
+            <% }); %>
           </ul>
         </nav>
       </div>
