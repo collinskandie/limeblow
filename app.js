@@ -49,7 +49,7 @@ async function handleIndexRequest(req, res) {
     const categories = await Category.findAll();
     const specialProducts = await Product.findAll({
       where: {
-        category: 2,
+        category: 1,
       },
     });
     console.log(specialProducts);

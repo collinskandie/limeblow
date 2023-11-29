@@ -1,4 +1,5 @@
 const Customer = require("../models/Customer");
+const Coupon = require("../models/Coupon");
 const crypto = require("crypto");
 const BillingDetails = require("../models/BillingDetails");
 const Contacts = require("../models/Contactform");
@@ -7,6 +8,7 @@ const bcrypt = require("bcryptjs");
 const {
   sendActivationMail,
   sendNewMessageMail,
+  subscribtionConfirmation,
 } = require("../mailer/sendmail");
 const jwt = require("jsonwebtoken");
 const AdminUser = require("../models/AdminUser");
@@ -233,7 +235,7 @@ async function adminLogin(req, res) {
         .status(401)
         .json({ message: "User not found", success: false });
     }
-    // Compare the provided password with the hashed password in the database
+
     const isPasswordValid = await bcrypt.compare(password, admin.password);
 
     if (!isPasswordValid) {
@@ -258,6 +260,58 @@ async function verifyToken(req, res) {
   console.log(req);
   res.status(200).json({ message: "Token is valid" });
 }
+async function userSubscribe(req, res) {
+  const newUser = req.body.email;
+  const user = await Customer.findOne({ where: { email: newUser } });
+
+  if (!user) {
+    // Generate a new random coupon
+    const randomCoupon = generateRandomCoupon();
+    const currentDate = new Date();
+    const expiryDate = new Date(currentDate);
+    expiryDate.setDate(currentDate.getDate() + 30); 
+
+    // Save the coupon to the "coupons" table
+    try {
+      console.log(randomCoupon);
+      const createdCoupon = await Coupon.create({
+        code: randomCoupon,
+        userEmail: newUser,
+        generatedAt: currentDate,
+        expiryDate: expiryDate,
+      });
+      subscribtionConfirmation(randomCoupon, newUser);
+      res.status(200).json({
+        success: true,
+        message: "Coupon created successfully",
+        coupon: createdCoupon,
+      });
+    } catch (error) {
+      console.log(error);
+      res
+        .status(500)
+        .json({ message: "Error creating coupon", error: error.message });
+    }
+  } else {
+    res.status(201).json({ message: "The user email exists" });
+  }
+}
+
+function generateRandomCoupon() {
+  const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"; // Characters to choose from
+  const couponLength = 10; // Length of the coupon code
+
+  let couponCode = "";
+
+  // Generate the coupon code
+  for (let i = 0; i < couponLength; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    couponCode += characters.charAt(randomIndex);
+  }
+
+  return couponCode;
+}
+
 module.exports = {
   AddUsers,
   login,
@@ -267,4 +321,5 @@ module.exports = {
   addAdmin,
   adminLogin,
   verifyToken,
+  userSubscribe,
 };

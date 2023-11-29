@@ -118,9 +118,37 @@ const sendInvoice = function (items, email, total, invoiceNumber, invoiceDate) {
     });
   });
 };
+const subscribtionConfirmation = function (promocode, email) {
+  fs.readFile(__dirname + "/subscribe.ejs", "utf-8", function (err, data) {
+    if (err) {
+      console.log("Error reading file", err);
+      return;
+    }
+
+    // Compile the EJS template with data
+    const renderedHtml = ejs.render(data, {
+      promocode,
+    });
+    let mailOptions = {
+      from: "Limebow Sales <sales@limebowgifts.com>",
+      to: email,
+      subject: `Thank you for subscribing to our newsletters.`,
+      html: renderedHtml,
+      text: "Success",
+    };
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("messsage sent: %s\n", info.response);
+      }
+    });
+  });
+};
 
 module.exports = {
   sendActivationMail,
   sendNewMessageMail,
+  subscribtionConfirmation,
   sendInvoice,
 };

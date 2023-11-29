@@ -53,10 +53,14 @@
             <td><%= category.createdAt %></td>
             <!-- Add these buttons to the "Action" column in your table -->
             <!-- Add these buttons to the "Action" column in your table -->
+
             <td>
               <button
                 class="btn btn-primary"
-                onclick="openModal('<%= category.id %>', '<%= category.name %>','<%= category.description %>')"
+                data-category-id="<%= category.id %>"
+                data-category-name="<%= category.name %>"
+                data-category-description="<%= category.description %>"
+                onclick="openModal(this)"
               >
                 Edit
               </button>
@@ -109,13 +113,12 @@
           </div>
           <div class="mb-3">
             <label class="form-label" for="editDescription">Description</label>
-            <input
-              type="text"
-              class="form-control"
-              aria-describedby="descHelp"
-              id="editDescription"
+            <textarea
               name="editDescription"
-            />
+              class="form-control"
+              id="editDescription"
+              aria-describedby="descHelp"
+            ></textarea>
             <div id="descHelp" class="form-text">Category Description</div>
           </div>
           <div class="mb-3">
@@ -163,6 +166,7 @@
               aria-describedby="newNameHelp"
               id="newName"
               name="newName"
+              required
             />
             <div id="newNameHelp" class="form-text">Category name</div>
           </div>
@@ -174,6 +178,7 @@
               aria-describedby="newDescHelp"
               id="newDescription"
               name="newDescription"
+              required
             />
             <div id="newDescHelp" class="form-text">Category Description</div>
           </div>
@@ -185,6 +190,7 @@
               id="newImage"
               name="image"
               accept="image/*"
+              required
             />
             <div id="newImageHelp" class="form-text">
               Upload a category image
@@ -242,13 +248,21 @@
   }
 
   // Function to open the modal for editing
-  function openModal(categoryId, categoryName, categoryDescription) {
+  function openModal(button) {
     const editNameInput = document.getElementById("editName");
     const editDescription = document.getElementById("editDescription");
     const catId = document.getElementById("catId");
+
+    // Retrieve data from the data attributes
+    const categoryId = button.getAttribute("data-category-id");
+    const categoryName = button.getAttribute("data-category-name");
+    const categoryDescription = button.getAttribute(
+      "data-category-description"
+    );
+
     // Populate the input fields with the current category data
     editNameInput.value = categoryName;
-    editDescription.value = categoryDescription;
+    editDescription.value = decodeURIComponent(categoryDescription);
     catId.value = categoryId;
 
     // Show the modal

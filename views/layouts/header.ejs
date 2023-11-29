@@ -12,15 +12,8 @@
     <!-- <div class="header__cart"> -->
     <ul>
       <li>
-        <a href="favourites">
-          <i class="fa fa-heart"></i>
-          <!-- <span id="cartItemCount">0</span> -->
-        </a>
-      </li>
-      <li>
         <a href="cart">
-          <i class="fa fa-shopping-bag"></i>
-          <!-- <span id="cartItemCount">0</span> -->
+          <i class="fa fa-shopping-bag header__cart__count"></i>
         </a>
       </li>
     </ul>
@@ -70,8 +63,8 @@
   </div>
   <div class="humberger__menu__contact">
     <ul>
-      <li><i class="fa fa-envelope"></i>limebowltd@gmail.com</li>
-      <li>Free Shipping for all Order of KES 5,000</li>
+      <li><i class="fa fa-envelope"></i>info@limebowgifts.com</li>
+      <!-- <li>Free Shipping for all Order of KES 5,000</li> -->
     </ul>
   </div>
 </div>
@@ -85,27 +78,13 @@
         <div class="col-lg-6 col-md-6">
           <div class="header__top__left">
             <ul>
-              <li><i class="fa fa-envelope"></i>limebowltd@gmail.com</li>
-              <li>Free Shipping for all Order of KES 5,000</li>
+              <li><i class="fa fa-envelope"></i>info@limebowgifts.com</li>
+              <!-- <li>Free Shipping for all Order of KES 5,000</li> -->
             </ul>
           </div>
         </div>
         <div class="col-lg-6 col-md-6">
           <div class="header__top__right">
-            <div class="header__top__right__social">
-              <a><i class="fa fa-facebook"></i></a>
-              <a><i class="fa fa-twitter"></i></a>
-              <a><i class="fa fa-linkedin"></i></a>
-              <a><i class="fa fa-pinterest-p"></i></a>
-            </div>
-            <div class="header__top__right__language">
-              <img src="img/language.png" alt="" />
-              <div>English</div>
-              <span class="arrow_carrot-down"></span>
-              <ul>
-                <li><a>English</a></li>
-              </ul>
-            </div>
             <div class="header__top__right__auth">
               <a id="authLink" href="/login"
                 ><i class="fa fa-user"></i> Login</a
@@ -130,14 +109,6 @@
             <li class="<%= title === 'Home' ? 'active' : '' %>">
               <a href="/index">Home</a>
             </li>
-            <li class="<%= title === 'Shop' ? 'active' : '' %>">
-              <a href="/shop-grid">Shop</a>
-            </li>
-            <% categories.forEach(category => { %>
-            <li class="<%= title === 'Category Details' ? 'active' : '' %>">
-              <a href="/department/<%= category.id %>"><%= category.name %></a>
-            </li>
-            <% }); %>
           </ul>
         </nav>
       </div>
@@ -145,14 +116,8 @@
         <div class="header__cart">
           <ul>
             <li>
-              <a href="favourites">
-                <i class="fa fa-heart"></i>
-              </a>
-            </li>
-            <li>
               <a href="/cart">
-                <i class="fa fa-shopping-bag"></i>
-                <!-- <span id="cartItemCount">0</span> -->
+                <i class="fa fa-shopping-bag header__cart__count"></i>
               </a>
             </li>
           </ul>
@@ -167,3 +132,40 @@
     </div>
   </div>
 </header>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Function to get cart items from local storage
+    function getCartItems() {
+      const cartItems = localStorage.getItem("cartItems");
+      return cartItems ? JSON.parse(cartItems) : [];
+    }
+
+    // Function to update the cart count
+    function updateCartCount() {
+      const cartItems = getCartItems();
+      let cartCount = 0;
+
+      // Calculate the total quantity from all items in the cart
+      for (const item of cartItems) {
+        cartCount += parseInt(item.quantity, 10);
+      }
+
+      // Update the cart count on both the mobile and desktop menus
+      const cartCountElements = document.querySelectorAll(
+        ".header__cart__count"
+      );
+      cartCountElements.forEach((element) => {
+        element.innerText = cartCount;
+      });
+    }
+
+    // Call the function to initially update the cart count
+    updateCartCount();
+  });
+  window.addEventListener("storage", function (event) {
+    if (event.key === "cartItems") {
+      // Update cart count when cartItems change in another window/tab
+      updateCartCount();
+    }
+  });
+</script>

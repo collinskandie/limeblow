@@ -6,6 +6,7 @@ const categoriesController = require("../controllers/categoriesController");
 const blogController = require("../controllers/blogController");
 const paymentsController = require("../controllers/paymentsController");
 const usersController = require("../controllers/usersController");
+const reportsController = require("../controllers/reportsController");
 const usersRouter = require("./users");
 const paymentRoutes = require("./payments");
 const { validateToken } = require("../middleware/userTokenValidator");
@@ -20,6 +21,10 @@ router.post("/addproduct", productsController.addProduct);
 router.post("/updateProduct", productsController.updateProduct);
 router.delete("/deleteProduct/:productId", productsController.deleteProduct);
 router.get("/generate-test-products", productsController.generateTestProducts);
+
+router.get("/salesperyear",reportsController.salePerYear)
+router.get("/recenttransactions",reportsController.recentTransactions)
+router.get("/recentsales",reportsController.recentSales)
 // router.get('/copy', copyImage);
 
 // categories
@@ -54,4 +59,5 @@ router.post("/dispatch", paymentsController.saveDispatch);
 router.get("/getdispatch/:invoiceId", paymentsController.getDispatch);
 router.post("/addAdmin", usersController.addAdmin);
 router.post("/admin/login", usersController.adminLogin);
+router.post("/subscribe",usersController.userSubscribe);
 module.exports = router;

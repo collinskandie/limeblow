@@ -39,10 +39,6 @@
         <div class="hero__search">
           <div class="hero__search__form">
             <form action="#">
-              <div class="hero__search__categories">
-                All Gifts
-                <span class="arrow_carrot-down"></span>
-              </div>
               <input
                 type="text"
                 id="searchInput"
@@ -52,10 +48,16 @@
             </form>
           </div>
           <div class="hero__search__phone__text">
-            <h5>+254113 811925</h5>
-            <span>support 24/7 time</span>
+            <a
+              href="https://api.whatsapp.com/send?phone=254113811925"
+              target="_blank"
+            >
+              <h5>&nbsp; &nbsp;+254113 811925</h5>
+              <span> &nbsp; &nbsp; &nbsp;Need Help?</span>
+            </a>
           </div>
         </div>
+
         <div id="suggestionsContainer" class="suggestions-container">
           <!-- Suggestions will be dynamically added here -->
         </div>
@@ -63,8 +65,8 @@
     </div>
   </div>
 </section>
-<% if (title != "Blog Details") { %>
-<section class="breadcrumb-section set-bg" data-setbg="/img/breadcrumb.jpg">
+<!-- <% if (title != "Blog Details") { %>
+<section class="breadcrumb-section set-bg">
   <div class="container">
     <div class="row">
       <div class="col-lg-12 text-center">
@@ -79,7 +81,7 @@
     </div>
   </div>
 </section>
-<% } %>
+<% } %> -->
 
 <script>
   const searchInput = document.getElementById("searchInput");

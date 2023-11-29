@@ -52,13 +52,27 @@
             <td><%= Product.description %></td>
             <td><%= Product.cost %></td>
             <td><%= Product.price %></td>
-            <td><%= Product.category %></td>
+            <td><%= Product.Category ? Product.Category.name : '' %></td>
             <td><%= Product.quantity %></td>
             <td><%= Product.updatedby %></td>
             <td>
               <button
                 class="btn btn-primary"
-                onclick="openModal('<%= Product.productid %>')">
+                onclick="openModal(
+                  '<%= Product.productid %>', 
+                  '<%= Product.name %>',
+                  '<%= Product.description %>',
+                  '<%= Product.cost %>',
+                  '<%= Product.price %>',
+                  '<%= Product.category %>',
+                  '<%= Product.quantity %>',
+                  '<%= Product.subCategory %>',
+                  '<%= Product.weight %>',
+                  '<%= Product.color %>',
+                  '<%= Product.size %>',
+                  '<%= Product.type %>',
+                  '<%= Product.availability %>')"
+              >
                 Edit
               </button>
 
@@ -72,7 +86,7 @@
               </button>
             </td>
           </tr>
-          <% }); %> 
+          <% }); %>
         </tbody>
       </table>
       <%- include('footer.ejs') %>
@@ -222,10 +236,11 @@
               id="editAvailability"
               name="editAvailability"
             >
-              <option value="yes">Yes</option>
-              <option value="no">No</option>
+              <option value="1" selected>Yes</option>
+              <option value="0">No</option>
             </select>
           </div>
+
           <div class="modal-footer">
             <button
               type="button"
@@ -354,8 +369,8 @@
               id="newAvailability"
               name="newAvailability"
             >
-              <option value="yes">Yes</option>
-              <option value="no">No</option>
+              <option value="1">Yes</option>
+              <option value="0">No</option>
             </select>
           </div>
           <div class="mb-3">
@@ -394,7 +409,6 @@
     </div>
   </div>
 </div>
-
 <script>
   function deleteProduct(ProductId) {
     fetch(`/api/deleteProduct/${ProductId}`, {
@@ -453,6 +467,7 @@
     const editColor = document.getElementById("editColor");
     const editAvailability = document.getElementById("editAvailability");
     const editImage = document.getElementById("editImage");
+    //const editType = document.getElementById("editType"); -->
     // Populate the input fields with the current Product data
     editNameInput.value = ProductName;
     editDescription.value = ProductDescription;
@@ -465,6 +480,7 @@
     editSize.value = size;
     editColor.value = color;
     editAvailability.value = availability;
+    // <!-- editType.value = type; -->
 
     // Show the modal
     const modal = document.getElementById("editModal");
@@ -606,7 +622,7 @@
     const newAvailabilityInput = document.getElementById("newAvailability");
     const newCategoryInput = document.getElementById("newCategory");
     const newSubCategoryInput = document.getElementById("newSubCategory");
-
+    const newType = document.getElementById("newType");
     const newName = newNameInput.value;
     const newDescription = newDescriptionInput.value;
     const newCost = parseFloat(newCostInput.value);
@@ -618,6 +634,7 @@
     const newAvailability = newAvailabilityInput.value;
     const newCategory = newCategoryInput.value;
     const newSubCategory = newSubCategoryInput.value;
+    //const prodType = newType.value;
 
     // Create an object with the new Product data
     const newProductData = {
@@ -629,6 +646,7 @@
       size: newSize,
       weight: newWeight,
       color: newColor,
+      //type: prodType,
       availability: newAvailability,
       category: newCategory,
       subcategory: newSubCategory,

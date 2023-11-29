@@ -68,8 +68,13 @@
             </form>
           </div>
           <div class="hero__search__phone__text">
-            <h5>+254113 811925</h5>
-            <span>support 24/7 time</span>
+            <a
+              href="https://api.whatsapp.com/send?phone=254113811925"
+              target="_blank"
+            >
+              <h5>&nbsp; &nbsp;+254113 811925</h5>
+              <span> &nbsp; &nbsp; &nbsp;Need Help?</span>
+            </a>
           </div>
         </div>
         <div id="suggestionsContainer" class="suggestions-container">
@@ -89,7 +94,9 @@
           data-setbg="/img/uploads/<%= Array.isArray(specialProduct.imagesurl) ? specialProduct.imagesurl[0] : specialProduct.imagesurl %>"
         >
           <h5>
-            <a href="/item-details/<%= specialProduct.productid %>"><%= specialProduct.name %></a>
+            <a href="/item-details/<%= specialProduct.productid %>"
+              ><%= specialProduct.name %></a
+            >
           </h5>
         </div>
       </div>
