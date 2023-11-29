@@ -1,200 +1,393 @@
-<body>
-  <!-- Hero Section Begin -->
-  <section class="hero" >
-    <%- include('hero.ejs') %>    
-  </section>
-  <section class="product-details spad">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-6 col-md-6">
-          <div class="product__details__pic">
-            <div class="product__details__pic__item">
-              <img
-                class="product__details__pic__item--large"
-                src="/img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[0] : product.imagesurl %>"
-                alt=""
-              />
-            </div>
-            <div class="product__details__pic__slider owl-carousel">
-              <img
-                data-imgbigurl="/img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[1] : product.imagesurl %>"
-                src="/img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[1] : product.imagesurl %>"
-                alt=""
-              />
-              <img
-                data-imgbigurl="/img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[2] : product.imagesurl %>"
-                src="/img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[2] : product.imagesurl %>"
-                alt=""
-              />
-              <img
-                data-imgbigurl="/img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[3] : product.imagesurl %>"
-                src="/img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[3] : product.imagesurl %>"
-                alt=""
-              />
-              <img
-                data-imgbigurl="/img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[4] : product.imagesurl %>"
-                src="/img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[4] : product.imagesurl %>"
-                alt=""
-              />
-            </div>
-          </div>
-        </div>
-        <div class="col-lg-6 col-md-6">
-          <div class="product__details__text">
-            <h3><%= product.name %></h3>
-            <div class="product__details__rating">
-              <i class="fa fa-star"></i>
-              <i class="fa fa-star"></i>
-              <i class="fa fa-star"></i>
-              <i class="fa fa-star"></i>
-              <i class="fa fa-star-half-o"></i>
-              <span>(18 reviews)</span>
-            </div>
-            <div class="product__details__price">KES <%= product.price %></div>
-            <p><%= product.description %></p>
-            <div class="product__details__quantity">
-              <div class="quantity">
-                <div class="pro-qty">
-                  <input type="text" value="1" />
-                </div>
-              </div>
-            </div>
-            <a
-              href="#"
-              onclick="addToCart('<%= product.productid %>', '<%= product.name %>')"
-              class="primary-btn"
-              >ADD TO CART</a
-            >
-            <a href="#" class="heart-icon"
-              ><span class="icon_heart_alt"></span
-            ></a>
-            <ul>
-              <li>
-                <b>Availability</b> <span><%= product.availability %></span>
-              </li>
-              <li>
-                <b>Shipping</b>
-                <span>01 day shipping. <samp>Free pickup today</samp></span>
-              </li>
-              <li><b>Weight</b> <span><%= product.weight %> KG</span></li>
-              <li>
-                <b>Share on</b>
-                <div class="share">
-                  <a href="#"><i class="fa fa-facebook"></i></a>
-                  <a href="#"><i class="fa fa-twitter"></i></a>
-                  <a href="#"><i class="fa fa-instagram"></i></a>
-                  <a href="#"><i class="fa fa-pinterest"></i></a>
-                </div>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div class="col-lg-12">
-          <div class="product__details__tab">
-            <ul class="nav nav-tabs" role="tablist">
-              <li class="nav-item">
-                <a
-                  class="nav-link active"
-                  data-toggle="tab"
-                  href="#tabs-1"
-                  role="tab"
-                  aria-selected="true"
-                  >Description</a
-                >
-              </li>
-              <li class="nav-item">
-                <a
-                  class="nav-link"
-                  data-toggle="tab"
-                  href="#tabs-2"
-                  role="tab"
-                  aria-selected="false"
-                  >Information</a
-                >
-              </li>
-              <li class="nav-item">
-                <a
-                  class="nav-link"
-                  data-toggle="tab"
-                  href="#tabs-3"
-                  role="tab"
-                  aria-selected="false"
-                  >Reviews <span>(1)</span></a
-                >
-              </li>
-            </ul>
-            <div class="tab-content">
-              <div class="tab-pane active" id="tabs-1" role="tabpanel">
-                <div class="product__details__tab__desc">
-                  <h6>Products Infomation</h6>
-                  <p><%= product.description %></p>
-                </div>
-              </div>
-              <div class="tab-pane" id="tabs-2" role="tabpanel">
-                <div class="product__details__tab__desc">
-                  <h6>Products Infomation</h6>
-                  <p><%= product.description %></p>
-                  <p><%= product.description %></p>
-                </div>
-              </div>
-              <div class="tab-pane" id="tabs-3" role="tabpanel">
-                <div class="product__details__tab__desc">
-                  <h6>Products Infomation</h6>
-                  <p><%= product.description %></p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- Product Details Section End -->
+<style>
+  @import url("https://fonts.googleapis.com/css?family=Lobster+Two:700|Poppins&display=swap");
 
-  <!-- Related Product Section Begin -->
-  <section class="related-product">
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-12">
-          <div class="section-title related__product__title">
-            <h2>Related Product</h2>
+  ::selection {
+    color: white;
+    background: #078618;
+  }
+
+  .center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 999;
+  }
+
+  .customize-box {
+    display: none;
+    top: 50%;
+    opacity: 1;
+    visibility: visible;
+    transition: 0.4s;
+    background: white;
+    height: auto;
+    width: 400px;
+    padding: 30px;
+    border-radius: 5px;
+    border: 1px solid #078618;
+    box-shadow: 5px 5px 30px rgba(0, 0, 0, 0.2);
+  }
+
+  .customize-box .fa-times {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background: #078618;
+    height: 45px;
+    width: 50px;
+    line-height: 40px;
+    color: white;
+    font-size: 18px;
+    border-radius: 0 5px 0 50px;
+    padding-left: 13px;
+    cursor: pointer;
+  }
+
+  .fa-times:hover {
+    font-size: 22px;
+  }
+
+  .customize-box .icon1 {
+    font-size: 60px;
+    background: #078618;
+    height: 120px;
+    width: 120px;
+    color: white;
+    border-radius: 50%;
+    line-height: 120px;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .customize-box header {
+    font-size: 31px;
+    font-family: "Lobster Two";
+    margin-bottom: 10px;
+  }
+
+  .customize-box p {
+    line-height: 20px;
+    color: grey;
+  }
+
+  .customize-box .icons {
+    margin-top: 25px;
+  }
+
+  .icons i {
+    font-size: 22px;
+    margin: 0 7px;
+    color: #078618;
+    cursor: pointer;
+  }
+
+  .icons i:hover {
+    transform: scale(1.1);
+    color: #078618;
+  }
+</style>
+<!-- Hero Section Begin -->
+<section class="hero"><%- include('hero.ejs') %></section>
+<section class="product-details spad">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-6 col-md-6">
+        <div class="product__details__pic">
+          <div class="product__details__pic__item">
+            <img
+              class="product__details__pic__item--large"
+              src="/img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[0] : product.imagesurl %>"
+              alt=""
+            />
+          </div>
+          <div class="product__details__video">
+            <% if (product.videourl && product.videourl.includes('youtube.com'))
+            { %>
+            <!-- Check if videourl exists for the product and is a YouTube link -->
+            <iframe
+              width="100%"
+              height="315"
+              src="<%= product.videourl.replace('watch?v=', 'embed/') %>"
+              frameborder="0"
+              allowfullscreen
+            ></iframe>
+            <% } %>
+          </div>
+
+          <div class="product__details__pic__slider owl-carousel">
+            <img
+              data-imgbigurl="/img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[1] : product.imagesurl %>"
+              src="/img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[1] : product.imagesurl %>"
+              alt=""
+            />
+            <img
+              data-imgbigurl="/img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[2] : product.imagesurl %>"
+              src="/img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[2] : product.imagesurl %>"
+              alt=""
+            />
+            <img
+              data-imgbigurl="/img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[3] : product.imagesurl %>"
+              src="/img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[3] : product.imagesurl %>"
+              alt=""
+            />
+            <img
+              data-imgbigurl="/img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[4] : product.imagesurl %>"
+              src="/img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[4] : product.imagesurl %>"
+              alt=""
+            />
           </div>
         </div>
       </div>
-      <div class="row featured__filter">
-        <% relatedProducts.forEach(relatedProduct => { %>
-        <div class="col-lg-3 col-md-4 col-sm-6 mix oranges fresh-meat">
-          <div class="featured__item">
-            <div
-              class="featured__item__pic set-bg"
-              data-setbg="/img/uploads/<%= Array.isArray(relatedProduct.imagesurl) ? relatedProduct.imagesurl[0] : relatedProduct.imagesurl %>"
-            >
-              <ul class="featured__item__pic__hover">
-                <li>
-                  <a><i class="fa fa-heart"></i></a>
-                </li>
-                <li></li>
-                <li>
-                  <a
-                    onclick="addToCart('<%= relatedProduct.productid %>', '<%= relatedProduct.name %>')"
-                  >
-                    <i class="fa fa-shopping-cart"></i>
-                  </a>
-                </li>
-              </ul>
+      <div class="col-lg-6 col-md-6">
+        <div class="product__details__text">
+          <h3><%= product.name %></h3>
+          <div class="product__details__rating">
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star"></i>
+            <i class="fa fa-star-half-o"></i>
+            <span>(18 reviews)</span>
+          </div>
+          <div class="product__details__price">KES <%= product.price %></div>
+          <span><samp>This item is customizeable</samp></span>
+          <br />
+          <p><%= product.description %></p>
+          <div class="product__details__quantity">
+            <div class="quantity">
+              <div class="pro-qty">
+                <input type="text" value="1" />
+              </div>
             </div>
-            <div class="featured__item__text">
-              <h6>
-                <a href="/item-details/<%= relatedProduct.productid %>"
-                  ><%= relatedProduct.name %></a
-                >
-              </h6>
-              <h5><%= relatedProduct.price %></h5>
+          </div>
+          <a
+            href="#"
+            onclick="addToCart('<%= product.productid %>', '<%= product.name %>')"
+            class="primary-btn"
+            >ADD TO CART</a
+          >
+          <a
+            onclick="openModal(
+            '<%= product.productid %>', 
+            '<%= product.name %>')"
+            class="btn btn-primary"
+            ><span>Customize <%= product.name %></span></a
+          >
+          <ul>
+            <li>
+              <b>Availability</b> <span><%= product.availability %></span>
+            </li>
+            <li>
+              <b>Shipping</b>
+              <span><%= product.shipping_time %></span>
+            </li>
+            <li><b>Weight</b> <span><%= product.weight %> KG</span></li>
+            <li>
+              <b>Share on</b>
+              <div class="share">
+                <a href="#"><i class="fa fa-facebook"></i></a>
+                <a href="#"><i class="fa fa-twitter"></i></a>
+                <a href="#"><i class="fa fa-instagram"></i></a>
+                <a href="#"><i class="fa fa-pinterest"></i></a>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="center customize-box">
+        <div class="fas fa-times close-button" onclick="closePopup()"></div>
+        <header>Customize your product!</header>
+        <p>
+          Fill out the form with the details of your customization, you call
+          also contact us via Whatsapp to give more details on the customization
+        </p>
+        <form id="customize-form">
+          <input
+            type="text"
+            id="item-name"
+            class="form-control"
+            name="item-name"
+            disabled
+          />
+          <br />
+          <input
+            type="text"
+            id="item-id"
+            class="form-control"
+            name="item-name"
+            disabled
+          />
+          <br />
+          <input
+            type="email"
+            class="form-control"
+            name="email"
+            placeholder="Enter your email"
+          />
+          <br />
+
+          <input
+            type="text"
+            class="form-control"
+            name="customerName"
+            placeholder="Enter your name"
+          />
+          <br />
+
+          <input
+            type="file"
+            class="form-control"
+            id="newImages"
+            name="images[]"
+            accept="image/*"
+            multiple
+            placeholder="Upload one or more product images (hold Ctrl/Cmd to select
+              multiple)."
+          />
+          <br />
+
+          <textarea
+            type="text"
+            class="form-control"
+            name="customizeDescription"
+            placeholder="Describe your custimaztion"
+          ></textarea>
+          <br />
+          <br />
+          <button type="submit" class="site-btn" style="width: 100%">
+            Send Details
+          </button>
+        </form>
+        
+        <div class="icons">
+          <p>You can also Whatsapp us, click the icon below</p>
+          <a
+            href="https://api.whatsapp.com/send?phone=254113811925"
+            ><i class="fab fa-whatsapp"></i
+          ></a>
+          
+        </div>
+      </div>
+      <div class="col-lg-12">
+        <div class="product__details__tab">
+          <ul class="nav nav-tabs" role="tablist">
+            <li class="nav-item">
+              <a
+                class="nav-link active"
+                data-toggle="tab"
+                href="#tabs-1"
+                role="tab"
+                aria-selected="true"
+                >Description</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                data-toggle="tab"
+                href="#tabs-2"
+                role="tab"
+                aria-selected="false"
+                >Information</a
+              >
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                data-toggle="tab"
+                href="#tabs-3"
+                role="tab"
+                aria-selected="false"
+                >Reviews <span>(1)</span></a
+              >
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="tabs-1" role="tabpanel">
+              <div class="product__details__tab__desc">
+                <h6>Products Infomation</h6>
+                <p><%= product.description %></p>
+              </div>
+            </div>
+            <div class="tab-pane" id="tabs-2" role="tabpanel">
+              <div class="product__details__tab__desc">
+                <h6>Products Infomation</h6>
+                <p><%= product.description %></p>
+                <p><%= product.description %></p>
+              </div>
+            </div>
+            <div class="tab-pane" id="tabs-3" role="tabpanel">
+              <div class="product__details__tab__desc">
+                <h6>Products Infomation</h6>
+                <p><%= product.description %></p>
+              </div>
             </div>
           </div>
         </div>
-        <% }); %>
       </div>
     </div>
-  </section>
-</body>
+  </div>
+</section>
+<!-- Product Details Section End -->
+
+<!-- Related Product Section Begin -->
+<section class="related-product">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="section-title related__product__title">
+          <h2>Related Product</h2>
+        </div>
+      </div>
+    </div>
+    <div class="row featured__filter">
+      <% relatedProducts.forEach(relatedProduct => { %>
+      <div class="col-lg-3 col-md-4 col-sm-6 mix oranges fresh-meat">
+        <div class="featured__item">
+          <div
+            class="featured__item__pic set-bg"
+            data-setbg="/img/uploads/<%= Array.isArray(relatedProduct.imagesurl) ? relatedProduct.imagesurl[0] : relatedProduct.imagesurl %>"
+          >
+            <ul class="featured__item__pic__hover">
+              <li>
+                <a><i class="fa fa-heart"></i></a>
+              </li>
+              <li></li>
+              <li>
+                <a
+                  onclick="addToCart('<%= relatedProduct.productid %>', '<%= relatedProduct.name %>')"
+                >
+                  <i class="fa fa-shopping-cart"></i>
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="featured__item__text">
+            <h6>
+              <a href="/item-details/<%= relatedProduct.productid %>"
+                ><%= relatedProduct.name %></a
+              >
+            </h6>
+            <h5><%= relatedProduct.price %></h5>
+          </div>
+        </div>
+      </div>
+      <% }); %>
+    </div>
+  </div>
+</section>
+<script>
+  function openModal(ProductId, ProductName) {
+    const itemName = document.getElementById("item-name");
+    const productId = document.getElementById("item-id");
+
+    itemName.value = ProductName;
+    productId.value = ProductId;
+    document.querySelector(".customize-box").style.display = "block";
+  }
+
+  function closePopup() {
+    document.querySelector(".customize-box").style.display = "none";
+  }
+</script>

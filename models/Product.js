@@ -25,6 +25,9 @@ const Product = sequelize.define("Product", {
       this.setDataValue("imagesurl", JSON.stringify(images));
     },
   },
+  videourl: { // New column for YouTube link
+    type: DataTypes.STRING,
+  },
   cost: {
     type: DataTypes.DECIMAL(10, 2),
     allowNull: false,
@@ -56,6 +59,9 @@ const Product = sequelize.define("Product", {
   subCategory: {
     type: DataTypes.STRING, // You can adjust the data type as needed
   },
+  shipping_time: {
+    type: DataTypes.STRING,
+  },
   timestamp: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
@@ -66,3 +72,4 @@ const Product = sequelize.define("Product", {
 });
 
 module.exports = Product;
+4

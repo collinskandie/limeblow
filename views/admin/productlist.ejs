@@ -149,7 +149,21 @@
               Ctrl/Cmd to select multiple).
             </div>
           </div>
-          <!-- Add the missing fields below -->
+          <div class="mb-3">
+            <label class="form-label" for="editVideoUrl">Video URL:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="editVideoUrl"
+              name="editVideoUrl"
+              placeholder="https://www.youtube.com/watch?v=n65TsTAbhPE"
+            />
+            <div id="videoHelp" class="form-text">
+              New Product video: Attach youtube video link eg
+              "https://www.youtube.com/watch?v=n65TsTAbhPE"
+            </div>
+          </div>
+
           <div class="mb-3">
             <label class="form-label" for="editCost">Cost:</label>
             <input
@@ -303,6 +317,20 @@
             </div>
           </div>
           <div class="mb-3">
+            <label class="form-label" for="editVideoUrl">Video URL:</label>
+            <input
+              type="text"
+              class="form-control"
+              id="videoUrl"
+              name="videoUrl"
+              placeholder="https://www.youtube.com/watch?v=n65TsTAbhPE"
+            />
+            <div id="videoHelp" class="form-text">
+              New Product video: Attach youtube video link eg
+              "https://www.youtube.com/watch?v=n65TsTAbhPE"
+            </div>
+          </div>
+          <div class="mb-3">
             <label class="form-label" for="newCost">Cost:</label>
             <input
               type="number"
@@ -372,6 +400,18 @@
               <option value="1">Yes</option>
               <option value="0">No</option>
             </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label" for="shipping_time"
+              >Availability for shipping after:</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="shipping_time"
+              name="shipping_time"
+              placeholder="Product will be avaialbel for shipping after?"
+            />
           </div>
           <div class="mb-3">
             <label class="form-label" for="newCategory">Category:</label>
@@ -467,8 +507,9 @@
     const editColor = document.getElementById("editColor");
     const editAvailability = document.getElementById("editAvailability");
     const editImage = document.getElementById("editImage");
-    //const editType = document.getElementById("editType"); -->
-    // Populate the input fields with the current Product data
+    const editVideoUrl = document.getElementById("editVideoUrl");
+
+    //const editType = document.getElementById("editType"); -->    // Populate the input fields with the current Product data
     editNameInput.value = ProductName;
     editDescription.value = ProductDescription;
     prodId.value = ProductId;
@@ -480,7 +521,7 @@
     editSize.value = size;
     editColor.value = color;
     editAvailability.value = availability;
-    // <!-- editType.value = type; -->
+    //editVideoUrl.value = videoUrl;
 
     // Show the modal
     const modal = document.getElementById("editModal");
@@ -509,6 +550,10 @@
     const editImage = document.getElementById("editImage");
     const editSubCategory = document.getElementById("editSubCategory");
 
+    //added later
+    const editVideoUrl = document.getElementById("editVideoUrl");
+    const editedVideoUrl = editVideoUrl.value;
+
     const editedName = editNameInput.value;
     const editedDescription = editDescription.value;
     const ProductId = prodId.value;
@@ -536,6 +581,7 @@
       availability: editedAvailabilty,
       category: editedCategory,
       subcategory: editedSubca,
+      videoUrl: editedVideoUrl,
     };
     // Add the selected image file to the FormData
     const imageFiles = editImage.files;
@@ -623,6 +669,9 @@
     const newCategoryInput = document.getElementById("newCategory");
     const newSubCategoryInput = document.getElementById("newSubCategory");
     const newType = document.getElementById("newType");
+    const videoUrl = document.getElementById("videoUrl").value;
+    const shipping_time = document.getElementById("shipping_time").value;
+
     const newName = newNameInput.value;
     const newDescription = newDescriptionInput.value;
     const newCost = parseFloat(newCostInput.value);
@@ -650,6 +699,8 @@
       availability: newAvailability,
       category: newCategory,
       subcategory: newSubCategory,
+      videoUrl: videoUrl,
+      shipping_time,
     };
 
     // Add the selected image files if available

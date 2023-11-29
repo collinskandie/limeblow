@@ -42,17 +42,18 @@ async function addProduct(req, res) {
       category,
       color,
       availability,
+      videoUrl,
+      shipping_time,
     } = req.body;
     const updatedby = "Admin";
 
     // Initialize an array to store image filenames
     const imageFilenames = [];
     // Check if images were uploaded
-    if (req.body.images) {      
+    if (req.body.images) {
       for (const image of req.body.images) {
-      
         const imageData = image;
-        const newImageName = await saveBase64Image(imageData);      
+        const newImageName = await saveBase64Image(imageData);
         imageFilenames.push(newImageName);
       }
     }
@@ -71,6 +72,8 @@ async function addProduct(req, res) {
       availability,
       imagesurl: imageFilenames, // Include the image filenames array in the product data
       updatedby,
+      videourl: videoUrl,
+      shipping_time,
     });
 
     return res.status(201).json({
@@ -104,9 +107,10 @@ async function updateProduct(req, res) {
       weight,
       color,
       availability,
+      videoUrl,
     } = req.body;
     const updatedby = "Admin";
-    console.log();
+
     const imageFilenames = [];
 
     const originalProduct = await Product.findByPk(ProductId);
@@ -138,6 +142,7 @@ async function updateProduct(req, res) {
       availability: availability,
       imagesurl: imageFilenames, // Include the image filenames array in the product data
       updatedby: updatedby,
+      videourl: videoUrl,
     };
 
     Product.update(updatedFields, { where: { productid: ProductId } })
