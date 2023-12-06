@@ -11,6 +11,19 @@ async function getAllProducts(req, res) {
     res.status(500).json({ error: "Error fetching products" });
   }
 }
+async function apiProducts(req, res) {
+  try {
+    const specialProducts = await Product.findAll({
+      where: {
+        category: 1,
+      },
+    });
+    res.status(200).json(specialProducts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error fetching products" });
+  }
+}
 async function getProduct(req, res) {
   try {
     const productId = parseInt(req.params.productId);
@@ -229,4 +242,5 @@ module.exports = {
   getProduct,
   updateProduct,
   deleteProduct,
+  apiProducts,
 };

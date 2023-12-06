@@ -16,6 +16,7 @@ router.get("/verifyToken", validateToken, usersController.verifyToken);
 
 // #products api
 router.get("/products", productsController.getAllProducts);
+router.get("/apiproducts", productsController.apiProducts);
 router.get("/productsbyId/:productId", productsController.getProduct);
 router.post("/addproduct", productsController.addProduct);
 router.post("/updateProduct", productsController.updateProduct);

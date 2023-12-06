@@ -65,7 +65,7 @@ const Product = sequelize.define("Product", {
   timestamp: {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
-  },
+  },  
   updatedby: {
     type: DataTypes.STRING,
   },
