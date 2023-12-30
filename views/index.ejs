@@ -144,7 +144,9 @@
         href="https://www.instagram.com/Maishalyxgifts/?igshid=NGVhN2U2NjQ0Yg%3D%3D"
         ><i class="fab fa-instagram"></i
       ></a>
-      <a href="https://twitter.com/limebowgifts"><i class="fab fa-twitter"></i></a>
+      <a href="https://twitter.com/limebowgifts"
+        ><i class="fab fa-twitter"></i
+      ></a>
       <a href="https://www.tiktok.com/@limebowgifts?_t=8hZcIiIP66Y&_r=1"
         ><i class="fab fa-tiktok"></i
       ></a>
@@ -177,26 +179,27 @@
             >
               <ul class="featured__item__pic__hover">
                 <li>
-                  <a><i class="fa fa-heart"></i></a>
+                  <a onclick="event.stopPropagation();"
+                    ><i class="fa fa-heart"></i
+                  ></a>
                 </li>
                 <li></li>
                 <li>
                   <a
-                    onclick="addToCart('<%= product.productid %>', '<%= product.name %>')"
-                  >
-                    <i class="fa fa-shopping-cart"></i>
-                  </a>
+                    onclick="event.stopPropagation(); addToCart('<%= product.productid %>', '<%= product.name %>')"
+                    ><i class="fa fa-shopping-cart"></i
+                  ></a>
                 </li>
               </ul>
             </div>
             <div class="featured__item__text">
-              <h6>
-                <a href="/item-details/<%= product.productid %>"
-                  ><%= product.name %></a
-                >
-              </h6>
+              <h6><%= product.name %></h6>
               <h5><%= product.price %></h5>
             </div>
+            <a
+              href="/item-details/<%= product.productid %>"
+              class="stretched-link"
+            ></a>
           </div>
         </div>
         <% }); %>
@@ -204,7 +207,6 @@
     </div>
   </section>
   <!-- Featured Section End -->
-
   <!-- Banner Begin -->
   <div class="banner">
     <div class="container">
@@ -244,7 +246,6 @@
       </div>
     </div>
   </div>
-
   <!-- Banner End -->
 
   <!-- Latest Product Section Begin -->
@@ -395,16 +396,13 @@
       const form = document.getElementById("subscribe-form");
 
       form.addEventListener("submit", function (event) {
-        event.preventDefault(); // Prevent the default form submission behavior
-
+        event.preventDefault(); 
         const email = form.querySelector("input[type='email']").value;
-
         // Define the API endpoint
         const apiEndpoint = "/api/subscribe"; // Ensure the correct API endpoint URL
         const data = {
           email: email,
         };
-
         // Send a POST request to the API endpoint
         fetch(apiEndpoint, {
           method: "POST",

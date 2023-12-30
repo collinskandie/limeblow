@@ -6,6 +6,7 @@ function saveBase64Image(base64Image) {
   const timestamp = new Date().toISOString().replace(/[-:.TZ]/g, "");
   const directoryPath = path.join(__dirname, "../public/img/uploads");
 
+
   // Create the directory if it doesn't exist
   if (!fs.existsSync(directoryPath)) {
     fs.mkdirSync(directoryPath, { recursive: true });
@@ -15,6 +16,8 @@ function saveBase64Image(base64Image) {
   const imageBuffer = Buffer.from(imageData, "base64");
 
   fs.writeFileSync(filePath, imageBuffer);
+
+  //uploadFileToS3(s3Location, imageBuffer, s3LocationPath);
 
   console.log("Image saved successfully:", filePath);
 

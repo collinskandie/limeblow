@@ -116,7 +116,6 @@
       const storedCartItems =
         JSON.parse(localStorage.getItem("cartItems")) || [];
       let totalPrice = 0;
-
       storedCartItems.forEach((item) => {
         totalPrice += item.price * item.quantity;
       });
@@ -212,19 +211,21 @@
 
       // Serialize the form data
       var formData = {};
+      var customData = {};
       $(this)
         .find("input, select")
         .each(function () {
           formData[$(this).attr("name")] = $(this).val();
         });
-
       const storedCartItems =
         JSON.parse(localStorage.getItem("cartItems")) || [];
+      const custimaztionData =
+        JSON.parse(localStorage.getItem("customizeFormData")) || [];
       const paymentData = {
+        customization: custimaztionData, // Assuming custimaztionData contains the customization data
         cartItems: storedCartItems, // Assuming storedCartItems contains the cart items
         total: totalPrice.toFixed(2), // Format total as a string with two decimal places
       };
-
       // Merge the form data and payment data into one object
       const requestData = {
         ...formData,
@@ -264,6 +265,7 @@
     });
   });
   const storedCartItems = JSON.parse(localStorage.getItem("cartItems")) || [];
+
   const cartItemList = document.getElementById("cartItemList");
   let totalPrice = 0;
   storedCartItems.forEach((item) => {

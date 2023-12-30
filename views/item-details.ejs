@@ -96,7 +96,8 @@
         <div class="product__details__pic">
           <div class="product__details__pic__item">
             <img
-              class="product__details__pic__item--large"
+              class="product__details__pic__item--medium"
+              style="height: 500px"
               src="/img/uploads/<%= Array.isArray(product.imagesurl) ? product.imagesurl[0] : product.imagesurl %>"
               alt=""
             />
@@ -182,7 +183,7 @@
               <b>Shipping</b>
               <span><%= product.shipping_time %></span>
             </li>
-            <li><b>Weight</b> <span><%= product.weight %> KG</span></li>
+            <li><b>Weight</b> <span><%= product.weight %></span></li>
             <li>
               <b>Share on</b>
               <div class="share">
@@ -259,14 +260,12 @@
             Send Details
           </button>
         </form>
-        
+
         <div class="icons">
           <p>You can also Whatsapp us, click the icon below</p>
-          <a
-            href="https://api.whatsapp.com/send?phone=254113811925"
+          <a href="https://api.whatsapp.com/send?phone=254113811925"
             ><i class="fab fa-whatsapp"></i
           ></a>
-          
         </div>
       </div>
       <div class="col-lg-12">
@@ -299,8 +298,8 @@
                 href="#tabs-3"
                 role="tab"
                 aria-selected="false"
-                >Reviews <span>(1)</span></a
-              >
+                >Reviews <span></span
+              ></a>
             </li>
           </ul>
           <div class="tab-content">
@@ -390,4 +389,47 @@
   function closePopup() {
     document.querySelector(".customize-box").style.display = "none";
   }
+  // submit form
+  // Initialize a variable to hold the Base64 string outside of the event listeners
+  var uploadedImageBase64 = null;
+
+  // Event listener for handling image uploads
+  document
+    .getElementById("newImages")
+    .addEventListener("change", function (event) {
+      var files = event.target.files;
+      if (files.length > 0) {
+        var fileReader = new FileReader();
+
+        fileReader.onload = function (event) {
+          // Save the Base64 string of the uploaded image to the variable
+          uploadedImageBase64 = event.target.result;
+        };
+
+        fileReader.readAsDataURL(files[0]);
+      }
+    });
+  // Event listener for handling form submissions
+  document
+    .getElementById("customize-form")
+    .addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      // Create an object to store the form data
+      var formData = {
+        itemName: document.getElementById("item-name").value,
+        itemId: document.getElementById("item-id").value,
+        email: document.querySelector('input[name="email"]').value,
+        customerName: document.querySelector('input[name="customerName"]')
+          .value,
+        newImages: uploadedImageBase64,
+        customizeDescription: document.querySelector(
+          'textarea[name="customizeDescription"]'
+        ).value,
+      };
+      // Convert the object to a string and save it to local storage
+      localStorage.setItem("customizeFormData", JSON.stringify(formData));
+      alert("Your customization details have been sent to us!");
+      closePopup();
+    });
 </script>

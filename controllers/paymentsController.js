@@ -7,6 +7,7 @@ const Dispatch = require("../models/dispatch");
 const { billingAdress } = require("./usersController");
 const { sendInvoice } = require("../mailer/sendmail");
 const Transaction = require("../models/Transaction");
+const Customization = require("../models/Customization");
 let latestTrans = "";
 async function newMpesa(req, res) {
   try {
@@ -148,7 +149,8 @@ async function mpesaCallBack(req, res) {
 async function savePayment(req, res) {
   try {
     // console.log(req.body.cartItems);
-    console.log(req.body);
+    // console.log(req.body);
+    var customizationItems = req.body.customization;
     const user = generateInvoiceNumber();
     const {
       first_name,
@@ -182,11 +184,13 @@ async function savePayment(req, res) {
       user,
       payment_method
     );
-    console.log(billing_address);
+    // console.log(billing_address);
 
     const invoiceNumber = await generateInvoiceNumber();
     createSale(user, items, invoiceNumber, new_amount);
     createReceiptItems(items, invoiceNumber, mpesa_confirmation);
+    // save cust details
+    createCustomization(customizationItems, invoiceNumber);
     const payment_status = savePaymentDetails(
       mpesa_confirmation,
       new_amount,
@@ -223,6 +227,26 @@ async function createReceiptItems(items, invoiceNumber) {
     console.log("All ReceiptItems created and saved successfully.");
   } catch (error) {
     console.error(`Error creating ReceiptItems: ${error.message}`);
+  }
+}
+async function createCustomization(customizationItems, invoiceNumber) {
+  try {
+    for (const item of customizationItems) {
+      var base64Image = customizationItems.newImages;
+      // Save the base64 image and get the file name
+      const savedImageName = saveBase64Image(base64Image);
+      const customization = await Customization.create({
+        productId: item.productId,
+        customization: item.customization,
+        invoiceNumber: invoiceNumber,
+        imageUrl: savedImageName, // Assuming you have a field to store the image URL or name
+      });
+      await customization.save();
+      console.log(`Customization created for product ID ${item.productId}`);
+    }
+    console.log("All Customization created and saved successfully.");
+  } catch (error) {
+    console.error(`Error creating Customization: ${error.message}`);
   }
 }
 function updateTransaction(status, latestTrans, trans) {
